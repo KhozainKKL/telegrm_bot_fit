@@ -4,15 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="adcea74b-aa53-4bda-be93-7a2577bc43ff" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/main/bot/main_bot.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/management/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/management/apps.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/management/management/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/management/management/commands/__init__.py" afterDir="false" />
+    <list default="true" id="adcea74b-aa53-4bda-be93-7a2577bc43ff" name="Changes" comment="create commands run_bot.py&#10;initial django-grappelli">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/bot/views.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/main/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/main/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/main_bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/bot/main_bot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/management/management/commands/run_bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/management/management/commands/run_bot.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,6 +37,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Python.main_bot.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
@@ -70,6 +66,19 @@
       <option name="presentableId" value="Default" />
       <updated>1710481850220</updated>
     </task>
+    <task id="LOCAL-00001" summary="create commands run_bot.py&#10;initial django-grappelli">
+      <option name="closed" value="true" />
+      <created>1710496813004</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1710496813004</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="create commands run_bot.py&#10;initial django-grappelli" />
+    <option name="LAST_COMMIT_MESSAGE" value="create commands run_bot.py&#10;initial django-grappelli" />
   </component>
 </project>
