@@ -31,3 +31,8 @@ def update_or_create_tg_user(data: Chat | User):
     else:
         logger.info(f'Успешно создан user в БД {first_name} {last_name} {username}')
     return create_status
+
+
+@sync_to_async
+def get_is_authenticated_tg_user(data: Chat | User):
+    pass
