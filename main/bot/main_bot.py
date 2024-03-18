@@ -1,20 +1,25 @@
 import datetime
 
 import telebot
+from asgiref.sync import sync_to_async
 from django.conf import settings
 from telebot.async_telebot import AsyncTeleBot
-from telegram_bot_calendar import DetailedTelegramCalendar, LSTEP
 
 from bot.example_text import helper
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 import calendar
 
+from bot.middleware import AddNewUserMiddleware
+from bot.models import TelegramUser
+
 bot = AsyncTeleBot(settings.TG_API_KEY, parse_mode='HTML')
 telebot.logger.setLevel(settings.LOGLEVEL)
 
+bot.setup_middleware(AddNewUserMiddleware())
 
-@bot.message_handler(commands=['start'])
+
+@bot.message_handler(commands=['group_lesson'])
 async def send_calendar(message):
     now = datetime.datetime.now()
     month = now.month
@@ -102,7 +107,13 @@ async def send_calendar(message):
                                     reply_markup=markup)
 
 
-@bot.message_handler(func=lambda message: True)
-async def echo_message(message):
-    await bot.send_message(message.chat.id, f'Привет, {message.chat.first_name}')
-    await bot.reply_to(message, helper)
+# @bot.message_handler(commands=['start'])
+# async def handle_message(message):
+#     await bot.send_message(message.chat.id, "Для доступа к функциям бота введите номер карты клуба:")
+#     user = await sync_to_async(TelegramUser.authenticate)(message.text, message.from_user.id)
+#     if user:
+#         await bot.send_message(message.chat.id, f'Привет, {message.chat.first_name}')
+#         await bot.reply_to(message, helper)
+#     else:
+#         await bot.send_message(message.chat.id,
+#                                "Вы не найдены в базе клуба. Чтобы стать нашим клиентом поситите наш Клуб.")
