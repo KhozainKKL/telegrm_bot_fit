@@ -6,7 +6,7 @@ class TelegramUser(models.Model):
         verbose_name = 'Пользователь тлеграмма'
         verbose_name_plural = 'Пользователи телеграмма'
 
-    card_id = models.ForeignKey('UserFit', on_delete=models.CASCADE, verbose_name='Номер карты', db_index=True)
+    card_id = models.OneToOneField('UserFit', on_delete=models.CASCADE, verbose_name='Номер карты', db_index=True)
     telegram_user_id = models.PositiveBigIntegerField(unique=True, blank=True, null=True, db_index=True,
                                                       verbose_name='ID пользователя telegram')
     email = models.EmailField(verbose_name='Почта')
