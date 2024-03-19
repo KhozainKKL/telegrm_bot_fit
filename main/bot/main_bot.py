@@ -126,29 +126,8 @@ async def send_calendar(message):
         await bot.edit_message_text("Выберите месяц:", call.message.chat.id, call.message.message_id,
                                     reply_markup=markup)
 
-# @bot.message_handler(commands=['start'])
-# async def echo_message(message):
-#     try:
-#         check_user = await sync_to_async(TelegramUser.objects.get)(telegram_user_id=message.from_user.id)
-#     except TelegramUser.DoesNotExist:
-#         await bot.send_message(message.chat.id,
-#                                "Вы не авторизованы. Пожалуйста, введите номер Вашей карты клиента:")
-#
-#         async def check_card(message):
-#             try:
-#                 check_card = await sync_to_async(UserFit.objects.get)(card=message.text)
-#                 await bot.send_message(message.chat.id,
-#                                        "Аутентифицируйте себя: Введите номер телефона указанный при заключении договора:")
-#
-#                 async def check_phone(message):
-#                     phone_fit = await sync_to_async(UserFit.objects.filter)(phone=message.text)
-#                     print(phone_fit)
-#                     await bot.send_message(message.chat.id, "Пушка")
-#
-#                 await bot.register_message_handler(callback=check_phone)
-#
-#             except UserFit.DoesNotExist:
-#                 await bot.send_message(message.chat.id,
-#                                        "Вы не являетесь клиентом нашего зала. Поситите наш зал по адресу:.............")
-#
-#         await bot.register_message_handler(callback=check_card)
+
+@bot.message_handler(func=lambda message: True)
+@require_authentication
+async def echo_message(message):
+    await bot.send_message(message.chat.id, helper)
