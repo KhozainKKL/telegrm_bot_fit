@@ -29,8 +29,8 @@ class AddNewUserMiddleware(BaseMiddleware):
 
         if await get_is_authenticated_tg_user(message) == 100:
             await self.bot.send_message(message.chat.id,
-                                        "Вы не авторизованы. Пожалуйста, введите номер Вашей карты клиента \n"
-                                        "и номер телефона указанные в договоре \n(Например: 111 88005551011):")
+                                        "Пожалуйста, введите номер Вашей карты клиента, а затем (через пробел) \n"
+                                        "номер телефона указанные в договоре \n(Например: 111 88005551011):")
             if await get_phone_in_user_fit(message, my_data) == 301:
                 await self.bot.send_message(message.chat.id,
                                             "<b>Успех: Приятного пользования.</b>")

@@ -113,6 +113,7 @@ async def send_calendar(message):
 
     @bot.callback_query_handler(func=lambda call: call.data.split('_')[0] == 'time')
     async def process_choice(call):
+
         await bot.edit_message_text(f"<b>Вы выбрали дату и время: {'-'.join(call.data.split('_')[1:4])}, "
                                     f"{':'.join(call.data.split('_')[4:6])}</b>\n Ждём Вас на тренировке.",
                                     call.message.chat.id,
