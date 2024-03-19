@@ -14,6 +14,8 @@ from environs import Env
 
 from pathlib import Path
 
+
+
 env = Env()
 env.read_env()
 
@@ -80,14 +82,11 @@ WSGI_APPLICATION = 'main.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': env.str('SQL_NAME'),
-        'USER': env.str('SQL_USER'),
-        'PASSWORD': env.str('SQL_PASSWORD'),
-        'HOST': env.str('SQL_HOST'),
-        'PORT': env.str('SQl_PORT'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -159,3 +158,5 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+
+
