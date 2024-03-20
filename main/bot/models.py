@@ -48,7 +48,10 @@ class TrainerFit(models.Model):
                                     verbose_name='Занятия')
 
     def __str__(self):
-        return f'{self.first_name} {self.last_name}'
+        if self.last_name == None:
+            return f'{self.first_name}'
+        else:
+            return f'{self.first_name} {self.last_name}'
 
 
 class LessonFit(models.Model):
@@ -88,6 +91,3 @@ class TimeLessonFit(models.Model):
 
     def __str__(self):
         return f'{self.time}'
-
-
-
