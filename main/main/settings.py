@@ -13,8 +13,7 @@ import os
 
 import colorlog
 from environs import Env
-
-from pathlib import Path
+from import_export.formats.base_formats import XLSX, XLS
 
 env = Env()
 env.read_env()
@@ -108,13 +107,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'ru'
+LANGUAGE_CODE = 'ru-RU'
 
 TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -161,3 +160,16 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+
+
+SUIT_CONFIG = {
+    "MENU": (
+        {'label': "Example", "icon": 'icon-ok', "models": [
+            {"label": "for all", 'url': '/example/'},
+            {"label": "for stuff", 'url': '/admin/example/'},
+        ]},
+    )
+}
+
+
+IMPORT_EXPORT_FORMATS = [XLSX, XLS]

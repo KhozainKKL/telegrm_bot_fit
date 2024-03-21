@@ -4,10 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="adcea74b-aa53-4bda-be93-7a2577bc43ff" name="Changes" comment="create middleware.py registration users">
-      <change afterPath="$PROJECT_DIR$/main/media/bot/расписание 25.03-31.03.pdf" afterDir="false" />
+    <list default="true" id="adcea74b-aa53-4bda-be93-7a2577bc43ff" name="Changes" comment="fix bags">
+      <change afterPath="$PROJECT_DIR$/main/bot/import_export/resourse.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/bot/main_bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/bot/main_bot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/bot/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/command_bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/bot/import_export/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/migrations/0002_alter_lessonfit_date_time_alter_lessonfit_time_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/bot/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/main/database/get_data_lesson.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/main/database/get_data_lesson.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/main/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/main/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/media/bot/расписание 25.03-31.03.pdf" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -118,7 +125,15 @@
       <option name="project" value="LOCAL" />
       <updated>1710852729307</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="fix bags">
+      <option name="closed" value="true" />
+      <created>1711003775143</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1711003775143</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -135,6 +150,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="create commands run_bot.py&#10;initial django-grappelli" />
     <MESSAGE value="create middleware.py registration users" />
-    <option name="LAST_COMMIT_MESSAGE" value="create middleware.py registration users" />
+    <MESSAGE value="fix bags" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix bags" />
   </component>
 </project>

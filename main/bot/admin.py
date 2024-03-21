@@ -1,27 +1,25 @@
 from django.contrib import admin
-from django.utils.timezone import localtime
 
+from bot.import_export.resourse import UserFitResource, TrainerFitResource
 from bot.models import TelegramUser, UserFit, TrainerFit, LessonFit, DateLessonFit, TimeLessonFit
 from import_export.admin import ImportExportActionModelAdmin
-from import_export import resources, fields
-from import_export.widgets import ForeignKeyWidget
 
 admin.site.register(TelegramUser)
-admin.site.register(TrainerFit)
 admin.site.register(LessonFit)
 admin.site.register(DateLessonFit)
-
-
-class TimeLessonFitAdmin(admin.ModelAdmin):
-    list_display = ('formatted_time',)
-
-    def formatted_time(self, obj):
-        return localtime(obj.time).strftime('%Y-%m-%d %H:%M')
-
-
-admin.site.register(TimeLessonFit, TimeLessonFitAdmin)
+admin.site.register(TimeLessonFit)
 
 
 @admin.register(UserFit)
 class UserFitModelAdmin(ImportExportActionModelAdmin):
-    pass
+    resource_class = UserFitResource
+    search_fields = ['first_name', 'last_name']
+    list_display = ['card', 'first_name', 'last_name', 'actived', 'phone']
+    list_filter = ('actived',)
+
+
+@admin.register(TrainerFit)
+class TrainerFitModelAdmin(ImportExportActionModelAdmin):
+    resource_class = TrainerFitResource
+    search_fields = ['first_name', 'last_name', 'lesson']
+    list_display = ['first_name', 'last_name']

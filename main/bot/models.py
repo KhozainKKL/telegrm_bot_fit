@@ -77,6 +77,7 @@ class DateLessonFit(models.Model):
 
     create_at = models.DateField(verbose_name='Дата начала:')
     create_to = models.DateField(verbose_name='Дата окончания:')
+    schedule = models.FileField(upload_to='bot/', verbose_name='Расписание')
 
     def __str__(self):
         return f"{self.create_at}: {self.create_to}"
