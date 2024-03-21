@@ -44,7 +44,7 @@ class TrainerFit(models.Model):
 
     first_name = models.CharField(max_length=20, blank=True, null=True, verbose_name='Имя')
     last_name = models.CharField(max_length=20, blank=True, null=True, verbose_name='Фамилия')
-    lesson = models.ManyToManyField('LessonFit', blank=True, related_name='trainerfit_lessonfit',
+    lesson = models.ManyToManyField('LessonFit', blank=True, related_name='trainer_lesson',
                                     verbose_name='Занятия')
 
     def __str__(self):
@@ -61,9 +61,9 @@ class LessonFit(models.Model):
 
     title = models.CharField(max_length=25, blank=True, null=True, verbose_name='Название')
     description = models.CharField(max_length=255, blank=True, null=True, verbose_name='Описание')
-    date_time = models.ManyToManyField('DateLessonFit', blank=True, related_name='lessonfit_datelessonfit',
+    date_time = models.ForeignKey('DateLessonFit', blank=True, on_delete=models.CASCADE,
                                        verbose_name='Промежуточное расписание')
-    time = models.ManyToManyField('TimeLessonFit', blank=True, related_name='lessonfit_timelessonfit',
+    time = models.ManyToManyField('TimeLessonFit', blank=True, related_name='lesson_time',
                                   verbose_name='Дата и время занятия')
 
     def __str__(self):

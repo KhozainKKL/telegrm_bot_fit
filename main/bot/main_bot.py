@@ -263,18 +263,12 @@ async def send_calendar(message):
 @bot.message_handler(commands=['schedule'])
 @require_authentication
 async def schedule(message):
-    today = datetime.date.today()
-    start_of_week = today - datetime.timedelta(days=today.weekday())
-    end_of_week = start_of_week + datetime.timedelta(days=6)
-    next_week_start = end_of_week + datetime.timedelta(days=1)
-    next_week_end = next_week_start + datetime.timedelta(days=6)
-    week_range_str = next_week_start.strftime('%d.%m') + '-' + next_week_end.strftime('%d.%m')
-
     sent_message = await bot.send_message(message.chat.id, "Загружаем расписание занятий.")
+    file_path = await get_data_lesson(message)
 
-    async with aiofiles.open(f'media/bot/расписание {week_range_str}.pdf', 'rb') as f:
+    async with aiofiles.open(file_path, 'rb') as file:
         # Отправляем документ пользователю
-        await bot.send_document(message.chat.id, f)
+        await bot.send_document(message.chat.id, file)
 
     # Удаляем сообщение о начале отправки файла
     await bot.delete_message(message.chat.id, sent_message.message_id)
