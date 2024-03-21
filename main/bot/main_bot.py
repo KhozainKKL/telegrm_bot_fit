@@ -1,5 +1,6 @@
 import datetime
 
+import aiofiles
 import telebot
 from asgiref.sync import sync_to_async
 from django.conf import settings
@@ -25,7 +26,6 @@ def require_authentication(func):
             user = await get_telegram_user_sync(message.chat.id)
         else:
             user = await get_telegram_user_sync(message.from_user.id)
-        print(user)
         if not user or not user.is_authenticated:
             await bot.send_message(message.chat.id, "Вы не авторизованы.")
         else:
@@ -254,10 +254,30 @@ async def send_calendar(message):
         await bot.send_sticker(call.message.chat.id,
                                sticker='CAACAgIAAxkBAAELtpdl9WfB4snERAkVgZOph6nRzVHAYwACqQADFkJrCiSoJ_sldvhYNAQ')
 
+    @bot.callback_query_handler(func=lambda call: call.data == "back_to_month")
+    async def back_to_month(call):
+        await bot.edit_message_text(chat_id=call.message.chat.id, text="Как вы хотите записаться на групповое занятие?",
+                                    message_id=call.message.message_id, reply_markup=markup)
 
-@bot.callback_query_handler(func=lambda call: call.data == "back_to_month")
-async def back_to_month(call):
-    await send_calendar(call.message)
+
+@bot.message_handler(commands=['schedule'])
+@require_authentication
+async def schedule(message):
+    today = datetime.date.today()
+    start_of_week = today - datetime.timedelta(days=today.weekday())
+    end_of_week = start_of_week + datetime.timedelta(days=6)
+    next_week_start = end_of_week + datetime.timedelta(days=1)
+    next_week_end = next_week_start + datetime.timedelta(days=6)
+    week_range_str = next_week_start.strftime('%d.%m') + '-' + next_week_end.strftime('%d.%m')
+
+    sent_message = await bot.send_message(message.chat.id, "Загружаем расписание занятий.")
+
+    async with aiofiles.open(f'media/bot/расписание {week_range_str}.pdf', 'rb') as f:
+        # Отправляем документ пользователю
+        await bot.send_document(message.chat.id, f)
+
+    # Удаляем сообщение о начале отправки файла
+    await bot.delete_message(message.chat.id, sent_message.message_id)
 
 
 @bot.message_handler(func=lambda message: True)
