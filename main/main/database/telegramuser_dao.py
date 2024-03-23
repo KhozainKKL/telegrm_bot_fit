@@ -42,11 +42,14 @@ def get_phone_in_user_fit(message: Chat | User, data: Chat | User):
                 is_authenticated=True,
                 telegram_user_id=data.id,
                 defaults=defaults_dict)
-            if create_status is False:
-                logger.info(
-                    f'Успешно обновлен user в БД: id:{data.id} Имя:{first_name} Фамилия:{last_name} Никнейм:{username}')
-            else:
-                logger.info(f'Успешно создан user в БД {first_name} {last_name} {username}')
-            return create_status
+            with open(f'bot/logging/{data.id}', 'w+', encoding='utf-8') as file:
+                if create_status is False:
+                    file.write(f'Успешно обновлен user в БД: id:{data.id} Имя:{first_name} Фамилия:{last_name} Никнейм:{username}')
+                    logger.info(
+                        f'Успешно обновлен user в БД: id:{data.id} Имя:{first_name} Фамилия:{last_name} Никнейм:{username}')
+                else:
+                    file.write(f'[INFO] = Успешно создан user в БД {first_name} {last_name} {username}')
+                    logger.info(f'Успешно создан user в БД {first_name} {last_name} {username}')
+                return create_status
     except UserFit.DoesNotExist:
         return 300

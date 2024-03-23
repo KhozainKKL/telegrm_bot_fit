@@ -243,6 +243,7 @@ async def send_calendar(message):
         date = call.data.split('_')[1]
         await set_data_user_lesson(call, date)
         data = await get_data_lesson(call.data, data=date, message=call)
+        print(data)
         # Обработка выбора пользователя по дате
         await bot.answer_callback_query(call.id, f"Вы записаны к тренеру: {str(*data['trainer'])}\n"
                                                  f"На занятие: {str(*data['lesson'])}\n"
@@ -280,59 +281,56 @@ async def my_lesson(message):
     data = await get_data_my_lesson(message)
     if not data:
         await bot.send_message(message.chat.id, "Вы пока не записаны на занятия.")
+    else:
+        # Создаем клавиатуру для отображения списка занятий
+        keyboard = InlineKeyboardMarkup(row_width=1)
+        for user_lesson in data:
+            # Формируем название занятия для кнопки
+            lesson_title = f"{user_lesson.lesson.title} - {user_lesson.date.time}"
+            # Формируем callback_data для кнопки
+            callback_data = f"lesson_{user_lesson.pk}"
+            # Добавляем кнопку в клавиатуру
+            keyboard.add(InlineKeyboardButton(text=lesson_title, callback_data=callback_data))
 
-    # Создаем клавиатуру для отображения списка занятий
-    keyboard = InlineKeyboardMarkup(row_width=1)
-    for user_lesson in data:
-        # Формируем название занятия для кнопки
-        lesson_title = f"{user_lesson.lesson.title} - {user_lesson.date.time}"
-        # Формируем callback_data для кнопки
-        callback_data = f"lesson_{user_lesson.pk}"
-        # Добавляем кнопку в клавиатуру
-        keyboard.add(InlineKeyboardButton(text=lesson_title, callback_data=callback_data))
+        # Отправляем сообщение с кнопками списка занятий
+        await bot.send_message(message.chat.id, "Список ваших занятий:", reply_markup=keyboard)
 
-    # Отправляем сообщение с кнопками списка занятий
-    await bot.send_message(message.chat.id, "Список ваших занятий:", reply_markup=keyboard)
+    @bot.callback_query_handler(lambda query: query.data.startswith('lesson_'))
+    async def lesson_info(query):
+        lesson_id = int(query.data.split('_')[1])
+        # Получаем информацию о занятии по его ID
+        user_lesson = await get_data_my_lesson(query.data, data=lesson_id)
+        # Формируем подробную информацию о занятии
+        lesson_info_text = (
+            f"<b>Занятие:</b> {user_lesson.lesson.title}\n"
+            f"<b>Дата и время:</b> {user_lesson.date.time}\n"
+            f"<b>Тренер:</b> {user_lesson.trainer.first_name} {user_lesson.trainer.last_name}\n"
+        )
 
+        # Создаем клавиатуру для кнопок "Отписаться" и "Назад"
+        keyboard_2 = InlineKeyboardMarkup()
+        keyboard_2.add(InlineKeyboardButton(text="Отписаться ⛔️", callback_data=f"unsubscribe_{lesson_id}"))
+        keyboard_2.add(InlineKeyboardButton(text="Назад ⬅️", callback_data="back_to_lessons"))
 
-@bot.callback_query_handler(lambda query: query.data.startswith('lesson_'))
-async def lesson_info(query):
-    lesson_id = int(query.data.split('_')[1])
-    # Получаем информацию о занятии по его ID
-    user_lesson = await get_data_my_lesson(query, data=lesson_id)
-    # Формируем подробную информацию о занятии
-    lesson_info_text = (
-        f"<b>Занятие:</b> {user_lesson.lesson.title}\n"
-        f"<b>Дата и время:</b> {user_lesson.date.time}\n"
-        f"<b>Тренер:</b> {user_lesson.trainer.first_name} {user_lesson.trainer.last_name}\n"
-    )
+        # Отправляем сообщение с подробной информацией о занятии и кнопками
+        await bot.edit_message_text(chat_id=query.message.chat.id, text=lesson_info_text,
+                                    message_id=query.message.message_id, reply_markup=keyboard_2)
 
-    # Создаем клавиатуру для кнопок "Отписаться" и "Назад"
-    keyboard = InlineKeyboardMarkup()
-    keyboard.add(InlineKeyboardButton(text="Отписаться", callback_data=f"unsubscribe_{lesson_id}"))
-    keyboard.add(InlineKeyboardButton(text="Назад", callback_data="back_to_lessons"))
+    @bot.callback_query_handler(lambda query: query.data == 'back_to_lessons')
+    async def back_to_lessons(query):
+        await bot.edit_message_text(chat_id=query.message.chat.id, text="Список ваших занятий:",
+                                    message_id=query.message.message_id, reply_markup=keyboard)
 
-    # Отправляем сообщение с подробной информацией о занятии и кнопками
-    await bot.send_message(query.from_user.id, text=lesson_info_text, reply_markup=keyboard)
+    @bot.callback_query_handler(lambda query: query.data.startswith('unsubscribe_'))
+    async def unsubscribe_from_lesson(query):
+        lesson_id = int(query.data.split('_')[1])
+        # Получаем объект занятия, от которого нужно отписаться
 
-
-@bot.callback_query_handler(lambda query: query.data == 'back_to_lessons')
-async def back_to_lessons(query):
-    await query.answer()
-    await my_lesson(query.message)  # Повторно вызываем функцию отображения списка занятий
-
-
-@bot.callback_query_handler(lambda query: query.data.startswith('unsubscribe_'))
-async def unsubscribe_from_lesson(query):
-    lesson_id = int(query.data.split('_')[1])
-    # Получаем объект занятия, от которого нужно отписаться
-
-    user_lesson = await get_data_my_lesson(query=query, data=lesson_id)
-    # Удаляем запись пользователя о занятии
-    await user_lesson.delete()
-    await query.answer("Вы успешно отписались от занятия.")
-    # Повторно вызываем функцию отображения списка занятий
-    await my_lesson(query.message)
+        await get_data_my_lesson(query.data, data=lesson_id)
+        # Удаляем запись пользователя о занятии
+        await bot.edit_message_text(chat_id=query.message.chat.id, text="Вы успешно отписались от занятия.",
+                                    message_id=query.message.message_id)
+        # Повторно вызываем функцию отображения списка занятий
 
 
 @bot.message_handler(func=lambda message: True)

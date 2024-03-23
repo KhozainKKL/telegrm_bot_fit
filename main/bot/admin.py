@@ -9,6 +9,7 @@ admin.site.register(LessonFit)
 admin.site.register(DateLessonFit)
 admin.site.register(TimeLessonFit)
 
+
 @admin.register(UserFit)
 class UserFitModelAdmin(ImportExportActionModelAdmin):
     resource_class = UserFitResource

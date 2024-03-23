@@ -72,24 +72,23 @@ def set_data_user_lesson(message, data):
     result, created = UserFitLesson.objects.get_or_create(user=user_fit, lesson=related_lessons,
                                                           trainer=related_trainers,
                                                           date=tmp)
-
+    print(result)
 
 @sync_to_async
 def get_data_my_lesson(query=None, data=None):
-    print(query.data)
-    print(query.text)
-    print(data)
     try:
-        if query.data.startswith('lesson_'):
-            data = list(UserFitLesson.objects.select_related('lesson', 'trainer', 'date').get(pk=data))
-            return data
-        elif query.data.startswith('unsubscribe_'):
-            return list(UserFitLesson.objects.get(pk=data))
+        if query:
+            if query.startswith('lesson_'):
+                data = UserFitLesson.objects.select_related('lesson', 'trainer', 'date').get(pk=data)
+                return data
+            elif query.startswith('unsubscribe_'):
+                data = UserFitLesson.objects.get(pk=data)
+                data.delete()
     except Exception:
         if query.text == '/my_lesson':
             # Получаем пользователя Telegram
             user_tg = TelegramUser.objects.filter(telegram_user_id=query.from_user.id).values_list('id',
-                                                                                                     flat=True).first()
+                                                                                                   flat=True).first()
             user_fit = UserFit.objects.get(id=user_tg)
             # Получаем список занятий, на которые записан пользователь
             return list(UserFitLesson.objects.filter(user=user_fit).select_related('lesson', 'date').all())

@@ -33,7 +33,7 @@ ALLOWED_HOSTS = ['*']
 TG_API_KEY = env.str('TG_API_KEY')
 
 INSTALLED_APPS = [
-    'main.apps.SuitConfig',
+    'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
