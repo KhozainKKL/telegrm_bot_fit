@@ -6,7 +6,7 @@ from asgiref.sync import sync_to_async
 from django.conf import settings
 from telebot.async_telebot import AsyncTeleBot
 
-from bot.example_text import helper
+from bot.example_text import helper, action
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 import calendar
@@ -178,7 +178,8 @@ async def send_calendar(message):
             markup.add(InlineKeyboardButton(text=str(date), callback_data=f"date_{date}"))
         markup.row(InlineKeyboardButton(text="Назад", callback_data="back_to_month"))
         # Отправляем сообщение с выбором даты занятия
-        await bot.edit_message_text(chat_id=call.message.chat.id, text="Выберите дату занятия:",
+        await bot.edit_message_text(chat_id=call.message.chat.id, text="<blockquote>️<i>Если кнопка не активна, то запись "
+                                                                       "на занятие закрыта.</i></blockquote>\n Выберите дату занятия:",
                                     message_id=call.message.message_id, reply_markup=markup)
 
     async def choose_by_trainer(message, trainers):
@@ -225,7 +226,8 @@ async def send_calendar(message):
         markup.row(InlineKeyboardButton(text="Назад", callback_data="back_to_month"))
 
         # Отправляем сообщение с выбором даты занятия
-        await bot.edit_message_text(chat_id=call.message.chat.id, text="Выберите дату занятия:",
+        await bot.edit_message_text(chat_id=call.message.chat.id, text="❗️<i>Если кнопка не активна, то запись "
+                                                                       "на занятие закрыта.</i>\n Выберите дату занятия:",
                                     message_id=call.message.message_id, reply_markup=markup)
 
     async def choose_any(message, dates):
@@ -243,7 +245,7 @@ async def send_calendar(message):
         date = call.data.split('_')[1]
         await set_data_user_lesson(call, date)
         data = await get_data_lesson(call.data, data=date, message=call)
-        print(data)
+
         # Обработка выбора пользователя по дате
         await bot.answer_callback_query(call.id, f"Вы записаны к тренеру: {str(*data['trainer'])}\n"
                                                  f"На занятие: {str(*data['lesson'])}\n"
@@ -254,6 +256,9 @@ async def send_calendar(message):
                                          f" {date}</b>", message_id=call.message.message_id)
         await bot.send_sticker(call.message.chat.id,
                                sticker='CAACAgIAAxkBAAELtpdl9WfB4snERAkVgZOph6nRzVHAYwACqQADFkJrCiSoJ_sldvhYNAQ')
+        with open(f'bot/logging/{call.message.chat.id}', 'a+', encoding='utf-8') as file:
+            file.write(
+                f"[INFO]-[{datetime.datetime.now()}]:Вы записаны к тренеру: {str(*data['trainer'])} - На занятие: {str(*data['lesson'])} - {date}\n")
 
     @bot.callback_query_handler(func=lambda call: call.data == "back_to_month")
     async def back_to_month(call):
@@ -270,6 +275,8 @@ async def schedule(message):
     async with aiofiles.open(file_path, 'rb') as file:
         # Отправляем документ пользователю
         await bot.send_document(message.chat.id, file)
+    with open(f'bot/logging/{message.from_user.id}', 'a+', encoding='utf-8') as file:
+        file.write(f"[INFO]-[{datetime.datetime.now()}]:Пользователь запросил расписание занятий на неделю.\n")
 
     # Удаляем сообщение о начале отправки файла
     await bot.delete_message(message.chat.id, sent_message.message_id)
@@ -327,6 +334,9 @@ async def my_lesson(message):
         # Получаем объект занятия, от которого нужно отписаться
 
         await get_data_my_lesson(query.data, data=lesson_id)
+
+        with open(f'bot/logging/{query.message.chat.id}', 'a+', encoding='utf-8') as file:
+            file.write(f"[INFO]-[{datetime.datetime.now()}]:Пользователь отписался от занятия id:{lesson_id}\n")
         # Удаляем запись пользователя о занятии
         await bot.edit_message_text(chat_id=query.message.chat.id, text="Вы успешно отписались от занятия.",
                                     message_id=query.message.message_id)

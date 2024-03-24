@@ -27,14 +27,10 @@ class UserFit(models.Model):
     card = models.PositiveIntegerField(blank=True, null=True, verbose_name='Номер карты', db_index=True)
     first_name = models.CharField(max_length=20, blank=True, null=True, verbose_name='Имя', db_index=True)
     last_name = models.CharField(max_length=20, blank=True, null=True, verbose_name='Фамилия', db_index=True)
-    created_at = models.DateTimeField(blank=True, null=True, verbose_name='Начало абонемента')
-    created_to = models.DateTimeField(blank=True, null=True, verbose_name='Коне абонемента')
-    actived = models.BooleanField(default=False, verbose_name='Активен')
     phone = models.IntegerField(verbose_name='Телефон')
-    email = models.EmailField(unique=True, blank=True, null=True, verbose_name='Почта')
 
     def __str__(self):
-        return f'{self.first_name} {self.last_name}'
+        return f'{self.card}'
 
 
 class UserFitLesson(models.Model):

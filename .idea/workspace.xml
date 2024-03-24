@@ -8,27 +8,11 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/bot/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/bot/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/bot/example_text.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/bot/example_text.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/logging/401182313" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main/bot/main_bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/bot/main_bot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/main/apps.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/bot/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/main/database/get_data_lesson.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/main/database/get_data_lesson.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/main/database/telegramuser_dao.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/main/database/telegramuser_dao.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/main/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/main/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/main/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/static/admin/js/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/main/static/admin/js/actions.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/static/admin/js/admin/DateTimeShortcuts.js" beforeDir="false" afterPath="$PROJECT_DIR$/main/static/admin/js/admin/DateTimeShortcuts.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/static/admin/js/admin/RelatedObjectLookups.js" beforeDir="false" afterPath="$PROJECT_DIR$/main/static/admin/js/admin/RelatedObjectLookups.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/static/suit/css/font-awesome.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/static/suit/css/suit.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/static/suit/fonts/FontAwesome.otf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/static/suit/fonts/fontawesome-webfont.eot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/static/suit/fonts/fontawesome-webfont.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/static/suit/fonts/fontawesome-webfont.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/static/suit/fonts/fontawesome-webfont.woff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/static/suit/fonts/fontawesome-webfont.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/static/suit/js/autosize.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/static/suit/js/suit.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/static/suit/js/suit.sortables.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/media/bot/расписание_25.03-31.03_GAaf5Xa.pdf" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,16 +40,17 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.main_bot.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Python/GitHub/telegrm_bot_fit/main/bot/migrations&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;vcs.Git&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.main_bot.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "D:/Python/GitHub/telegrm_bot_fit/main/bot/migrations",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "vcs.Git"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\Python\GitHub\telegrm_bot_fit\main\bot\migrations" />
@@ -120,7 +105,15 @@
       <option name="project" value="LOCAL" />
       <updated>1710781797874</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="create commands calendar and 1 sticker">
+      <option name="closed" value="true" />
+      <created>1711178607730</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1711178607730</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">

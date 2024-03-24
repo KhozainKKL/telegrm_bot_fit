@@ -72,7 +72,6 @@ def set_data_user_lesson(message, data):
     result, created = UserFitLesson.objects.get_or_create(user=user_fit, lesson=related_lessons,
                                                           trainer=related_trainers,
                                                           date=tmp)
-    print(result)
 
 @sync_to_async
 def get_data_my_lesson(query=None, data=None):
