@@ -51,14 +51,12 @@ def get_data_lesson(call, data=None, message=None):
 
 @sync_to_async
 def set_data_user_lesson(message, data):
-    tmp = TimeLessonFit.objects.filter(time=data).first()
-    related_lessons = LessonFit.objects.filter(time=tmp).first()
-    related_trainers = TrainerFit.objects.filter(lesson=related_lessons).first()
+    tmp = MainTableAdmin.objects.filter(date=data).first()
     user_tg = TelegramUser.objects.filter(telegram_user_id=message.from_user.id).values_list('id', flat=True).first()
     user_fit = UserFit.objects.get(id=user_tg)
-    result, created = UserFitLesson.objects.get_or_create(user=user_fit, lesson=related_lessons,
-                                                          trainer=related_trainers,
-                                                          date=tmp)
+    result, created = UserFitLesson.objects.get_or_create(user=user_fit, lesson=tmp)
+    tmp.number_of_recorded += 1
+    tmp.save()
 
 
 @sync_to_async
@@ -66,15 +64,15 @@ def get_data_my_lesson(query=None, data=None):
     try:
         if query:
             if query.startswith('lesson_'):
+                data = list(MainTableAdmin.objects.filter(pk__in=[data]))
                 print(data)
-                data = list(UserFitLesson.objects.filter(lesson=data).values_list('lesson', flat=True))
-                print(data)
-                data = list(MainTableAdmin.objects.get(pk=data))
-                print(data)
-                return data
+                return data[0]
             elif query.startswith('unsubscribe_'):
-                data = list(UserFitLesson.objects.get(pk=data))
-                data.delete()
+                tmp = MainTableAdmin.objects.filter(pk=data).first()
+                tmp.number_of_recorded -= 1
+                tmp.save()
+                data = UserFitLesson.objects.filter(lesson=data)
+                data[0].delete()
     except Exception:
         if query.text == '/my_lesson':
             # Получаем пользователя Telegram
@@ -86,3 +84,4 @@ def get_data_my_lesson(query=None, data=None):
             data_to = list(MainTableAdmin.objects.filter(pk__in=data))
             print(data_to)
             return data_to
+

@@ -14,7 +14,6 @@ logger = logging.getLogger(__name__)
 def get_is_authenticated_tg_user(message: Chat | User):
     try:
         get = TelegramUser.objects.get(telegram_user_id=message.from_user.id)
-        print(get)
     except TelegramUser.DoesNotExist:
         return 100
 
