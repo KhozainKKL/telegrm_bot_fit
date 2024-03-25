@@ -213,7 +213,7 @@ async def schedule(message):
             # TODO Доделать описание тренировок! (кнопки на каждую тренировку) + кнопка для массового описания
 
 
-@bot.message_handler(regexp='Список занятий на которые Вы записаны📆')
+@bot.message_handler(regexp='Занятия на которые Вы записаны📆')
 @require_authentication
 async def my_lesson(message):
     data = await get_data_my_lesson(message)
@@ -286,6 +286,6 @@ async def echo_message(message):
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add(KeyboardButton('Записаться на групповое занятие 🤸‍♂️'))
     keyboard.add(KeyboardButton('Расписание и описание групповых занятий 🧘‍♂️'))
-    keyboard.add(KeyboardButton('Список занятий на которые Вы записаны📆'))
+    keyboard.add(KeyboardButton('Занятия на которые Вы записаны📆'))
 
     await bot.send_message(message.chat.id, helper, reply_markup=keyboard)
