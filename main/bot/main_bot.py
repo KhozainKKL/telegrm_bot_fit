@@ -71,7 +71,7 @@ async def send_calendar(message):
         markup = InlineKeyboardMarkup(row_width=1)
         for lesson_type in lesson_types:
             markup.add(InlineKeyboardButton(text=lesson_type, callback_data=f"type_{lesson_type}"))
-        markup.row(InlineKeyboardButton(text="Назад", callback_data="back_to_month"))
+        markup.row(InlineKeyboardButton(text="Назад ⬅️", callback_data="back_to_month"))
 
         await bot.edit_message_text("Выберите вид занятия:", message.chat.id, message.message_id, reply_markup=markup)
 
@@ -86,7 +86,7 @@ async def send_calendar(message):
         for date in dates:
             formatted_date = f"{date.strftime('%d')} {MONTHS_RU[date.month]} {date.strftime('%Y')} г. {date.strftime('%H:%M')}"
             markup.add(InlineKeyboardButton(text=str(formatted_date), callback_data=f"date_{date}"))
-        markup.row(InlineKeyboardButton(text="Назад", callback_data="back_to_month"))
+        markup.row(InlineKeyboardButton(text="Назад ⬅️", callback_data="back_to_month"))
         # Отправляем сообщение с выбором даты занятия
         await bot.edit_message_text(chat_id=call.message.chat.id,
                                     text="<blockquote>️<i>Если кнопка не активна, то запись "
@@ -104,7 +104,7 @@ async def send_calendar(message):
             else:
                 markup.add(InlineKeyboardButton(text=f"{trainer.first_name}",
                                                 callback_data=f"trainer_{trainer.id}"))
-        markup.row(InlineKeyboardButton(text="Назад", callback_data="back_to_month"))
+        markup.row(InlineKeyboardButton(text="Назад ⬅️", callback_data="back_to_month"))
 
         await bot.edit_message_text("Выберите тренера:", message.chat.id, message.message_id, reply_markup=markup)
 
@@ -118,7 +118,7 @@ async def send_calendar(message):
         markup = InlineKeyboardMarkup(row_width=1)
         for types in lesson:
             markup.add(InlineKeyboardButton(text=str(types), callback_data=f"trainers_lesson_{types}"))
-        markup.row(InlineKeyboardButton(text="Назад", callback_data="back_to_month"))
+        markup.row(InlineKeyboardButton(text="Назад ⬅️", callback_data="back_to_month"))
 
         # Отправляем сообщение с выбором даты занятия
         await bot.edit_message_text(chat_id=call.message.chat.id, text="Выберите вид занятия:",
@@ -135,7 +135,7 @@ async def send_calendar(message):
         for types in data:
             formatted_date = f"{types.strftime('%d')} {MONTHS_RU[types.month]} {types.strftime('%Y')} г. {types.strftime('%H:%M')}"
             markup.add(InlineKeyboardButton(text=str(formatted_date), callback_data=f"date_{types}"))
-        markup.row(InlineKeyboardButton(text="Назад", callback_data="back_to_month"))
+        markup.row(InlineKeyboardButton(text="Назад ⬅️", callback_data="back_to_month"))
 
         # Отправляем сообщение с выбором даты занятия
         await bot.edit_message_text(chat_id=call.message.chat.id,
@@ -150,7 +150,7 @@ async def send_calendar(message):
         for date in dates:
             formatted_date = f"{date.strftime('%d')} {MONTHS_RU[date.month]} {date.strftime('%Y')} г. {date.strftime('%H:%M')}"
             markup.add(InlineKeyboardButton(text=str(formatted_date), callback_data=f"date_{date}"))
-        markup.row(InlineKeyboardButton(text="Назад", callback_data="back_to_month"))
+        markup.row(InlineKeyboardButton(text="Назад ⬅️", callback_data="back_to_month"))
 
         await bot.edit_message_text("Выберите дату занятия:", message.chat.id, message.message_id, reply_markup=markup)
 
