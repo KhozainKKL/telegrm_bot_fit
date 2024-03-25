@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'import_export',
     'bot.apps.BotConfig',
     'management.apps.ManagementConfig',
+    'main_table_admin.apps.MainTableAdminConfig',
 ]
 
 MIDDLEWARE = [

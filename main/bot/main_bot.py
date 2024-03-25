@@ -11,7 +11,7 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 import calendar
 from bot.middleware import AddNewUserMiddleware
-from bot.models import TelegramUser, UserFit, LessonFit, TrainerFit, TimeLessonFit
+from bot.models import TelegramUser, UserFit, LessonFit, TrainerFit
 from main.database.get_data_lesson import get_data_lesson, set_data_user_lesson, get_data_my_lesson
 
 bot = AsyncTeleBot(settings.TG_API_KEY, parse_mode='HTML')
@@ -178,8 +178,9 @@ async def send_calendar(message):
             markup.add(InlineKeyboardButton(text=str(date), callback_data=f"date_{date}"))
         markup.row(InlineKeyboardButton(text="Назад", callback_data="back_to_month"))
         # Отправляем сообщение с выбором даты занятия
-        await bot.edit_message_text(chat_id=call.message.chat.id, text="<blockquote>️<i>Если кнопка не активна, то запись "
-                                                                       "на занятие закрыта.</i></blockquote>\n Выберите дату занятия:",
+        await bot.edit_message_text(chat_id=call.message.chat.id,
+                                    text="<blockquote>️<i>Если кнопка не активна, то запись "
+                                         "на занятие закрыта.</i></blockquote>\n Выберите дату занятия:",
                                     message_id=call.message.message_id, reply_markup=markup)
 
     async def choose_by_trainer(message, trainers):
@@ -245,15 +246,14 @@ async def send_calendar(message):
         date = call.data.split('_')[1]
         await set_data_user_lesson(call, date)
         data = await get_data_lesson(call.data, data=date, message=call)
-
         # Обработка выбора пользователя по дате
-        await bot.answer_callback_query(call.id, f"Вы записаны к тренеру: {str(*data['trainer'])}\n"
-                                                 f"На занятие: {str(*data['lesson'])}\n"
-                                                 f" {date}")
+        await bot.answer_callback_query(call.id, f"Вы записаны к тренеру: {data[0].trainer}\n"
+                                                 f"На занятие: {data[0].lesson}\n"
+                                                 f" {data[0].date}")
         await bot.edit_message_text(chat_id=call.message.chat.id,
-                                    text=f"<b>Вы записаны к тренеру: {str(*data['trainer'])}\n"
-                                         f"На занятие: {str(*data['lesson'])}\n"
-                                         f" {date}</b>", message_id=call.message.message_id)
+                                    text=f"<b>Вы записаны к тренеру: {data[0].trainer}\n"
+                                         f"На занятие: {data[0].lesson}\n"
+                                         f" {data[0].date}</b>", message_id=call.message.message_id)
         await bot.send_sticker(call.message.chat.id,
                                sticker='CAACAgIAAxkBAAELtpdl9WfB4snERAkVgZOph6nRzVHAYwACqQADFkJrCiSoJ_sldvhYNAQ')
         with open(f'bot/logging/{call.message.chat.id}', 'a+', encoding='utf-8') as file:
@@ -271,8 +271,10 @@ async def send_calendar(message):
 async def schedule(message):
     sent_message = await bot.send_message(message.chat.id, "Загружаем расписание занятий.")
     file_path = await get_data_lesson(message)
-
-    async with aiofiles.open(file_path, 'rb') as file:
+    if not file_path:
+        await bot.delete_message(message.chat.id, sent_message.message_id)
+        await bot.send_message(message.chat.id, "Расписания на следующую неделю еще нет.")
+    async with aiofiles.open(file_path[0].schedule.path, 'rb') as file:
         # Отправляем документ пользователю
         await bot.send_document(message.chat.id, file)
     with open(f'bot/logging/{message.from_user.id}', 'a+', encoding='utf-8') as file:
@@ -293,7 +295,7 @@ async def my_lesson(message):
         keyboard = InlineKeyboardMarkup(row_width=1)
         for user_lesson in data:
             # Формируем название занятия для кнопки
-            lesson_title = f"{user_lesson.lesson.title} - {user_lesson.date.time}"
+            lesson_title = f"{user_lesson.lesson} - {user_lesson.date}"
             # Формируем callback_data для кнопки
             callback_data = f"lesson_{user_lesson.pk}"
             # Добавляем кнопку в клавиатуру
@@ -309,8 +311,8 @@ async def my_lesson(message):
         user_lesson = await get_data_my_lesson(query.data, data=lesson_id)
         # Формируем подробную информацию о занятии
         lesson_info_text = (
-            f"<b>Занятие:</b> {user_lesson.lesson.title}\n"
-            f"<b>Дата и время:</b> {user_lesson.date.time}\n"
+            f"<b>Занятие:</b> {user_lesson.lesson}\n"
+            f"<b>Дата и время:</b> {user_lesson.date}\n"
             f"<b>Тренер:</b> {user_lesson.trainer.first_name} {user_lesson.trainer.last_name}\n"
         )
 

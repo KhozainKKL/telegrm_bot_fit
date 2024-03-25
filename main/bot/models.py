@@ -27,24 +27,10 @@ class UserFit(models.Model):
     card = models.PositiveIntegerField(blank=True, null=True, verbose_name='Номер карты', db_index=True)
     first_name = models.CharField(max_length=20, blank=True, null=True, verbose_name='Имя', db_index=True)
     last_name = models.CharField(max_length=20, blank=True, null=True, verbose_name='Фамилия', db_index=True)
-    phone = models.IntegerField(verbose_name='Телефон')
+    phone = models.CharField(max_length=16, verbose_name='Телефон')
 
     def __str__(self):
-        return f'{self.card}'
-
-
-class UserFitLesson(models.Model):
-    class Meta:
-        verbose_name = 'Клиент записанный на занятие'
-        verbose_name_plural = 'Клиенты записанные на занятия'
-
-    user = models.ForeignKey(UserFit, on_delete=models.CASCADE, verbose_name='Клиент')
-    lesson = models.ForeignKey('LessonFit', on_delete=models.CASCADE, verbose_name='Занятие')
-    trainer = models.ForeignKey('TrainerFit', on_delete=models.CASCADE, verbose_name='Тренер')
-    date = models.ForeignKey('TimeLessonFit', on_delete=models.CASCADE, verbose_name='Время занятия')
-
-    def __str__(self):
-        return f'{self.user}'
+        return f'{self.card}-[{self.first_name} {self.last_name}]'
 
 
 class TrainerFit(models.Model):
@@ -54,11 +40,9 @@ class TrainerFit(models.Model):
 
     first_name = models.CharField(max_length=20, blank=True, null=True, verbose_name='Имя')
     last_name = models.CharField(max_length=20, blank=True, null=True, verbose_name='Фамилия')
-    lesson = models.ManyToManyField('LessonFit', blank=True, related_name='trainer_lesson',
-                                    verbose_name='Занятия')
 
     def __str__(self):
-        if self.last_name == None:
+        if self.last_name is None:
             return f'{self.first_name}'
         else:
             return f'{self.first_name} {self.last_name}'
@@ -71,10 +55,6 @@ class LessonFit(models.Model):
 
     title = models.CharField(max_length=25, blank=True, null=True, verbose_name='Название', db_index=True)
     description = models.CharField(max_length=255, blank=True, null=True, verbose_name='Описание')
-    date_time = models.ForeignKey('DateLessonFit', blank=True, on_delete=models.CASCADE,
-                                       verbose_name='Промежуточное расписание')
-    time = models.ManyToManyField('TimeLessonFit', blank=True, related_name='lesson_time',
-                                  verbose_name='Дата и время занятия')
 
     def __str__(self):
         return f'{self.title}'
@@ -82,8 +62,8 @@ class LessonFit(models.Model):
 
 class DateLessonFit(models.Model):
     class Meta:
-        verbose_name = 'Расписание группового занятия'
-        verbose_name_plural = 'Расписание групповых занятий'
+        verbose_name = 'Недельное расписание группового занятия'
+        verbose_name_plural = 'Недельные расписания групповых занятий'
 
     create_at = models.DateField(verbose_name='Дата начала:')
     create_to = models.DateField(verbose_name='Дата окончания:')
@@ -91,14 +71,3 @@ class DateLessonFit(models.Model):
 
     def __str__(self):
         return f"{self.create_at}: {self.create_to}"
-
-
-class TimeLessonFit(models.Model):
-    class Meta:
-        verbose_name = 'Время группового занятия'
-        verbose_name_plural = 'Время групповых занятий'
-
-    time = models.DateTimeField(verbose_name='Время занятия', db_index=True)
-
-    def __str__(self):
-        return f'{self.time}'

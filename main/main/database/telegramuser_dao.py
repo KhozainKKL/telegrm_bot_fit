@@ -1,9 +1,11 @@
 import logging
+import re
 
+from django.db.utils import OperationalError
 from asgiref.sync import sync_to_async
 from telebot.types import Chat, User
 
-from bot.models import TelegramUser, UserFit
+from bot.models import UserFit, TelegramUser
 
 logger = logging.getLogger(__name__)
 
@@ -12,6 +14,7 @@ logger = logging.getLogger(__name__)
 def get_is_authenticated_tg_user(message: Chat | User):
     try:
         get = TelegramUser.objects.get(telegram_user_id=message.from_user.id)
+        print(get)
     except TelegramUser.DoesNotExist:
         return 100
 
@@ -20,7 +23,16 @@ def get_is_authenticated_tg_user(message: Chat | User):
 def get_phone_in_user_fit(message: Chat | User, data: Chat | User):
     try:
         message = message.text.split(' ')
-        phone = UserFit.objects.filter(card=message[0], phone=message[1])
+
+        def format_phone_number(phone_number):
+            phone_number = str(phone_number)
+            digits = re.sub(r'\D', '', phone_number)
+
+            formatted_number = '+7-{}-{}-{}-{}'.format(digits[-10:-7], digits[-7:-4], digits[-4:-2], digits[-2:])
+
+            return formatted_number
+
+        phone = UserFit.objects.filter(card=message[0], phone=format_phone_number(message[1]))
         if phone.exists():
             try:
                 data = getattr(data, 'chat')

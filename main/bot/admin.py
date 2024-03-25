@@ -1,13 +1,11 @@
 from django.contrib import admin
 
-from bot.import_export.resourse import UserFitResource, TrainerFitResource
-from bot.models import TelegramUser, UserFit, TrainerFit, LessonFit, DateLessonFit, TimeLessonFit, UserFitLesson
+from bot.import_export.resourse import UserFitResource, TrainerFitResource, LessonFitResource
+from bot.models import UserFit, TrainerFit, LessonFit, DateLessonFit, TelegramUser
 from import_export.admin import ImportExportActionModelAdmin
 
-admin.site.register(LessonFit)
 admin.site.register(DateLessonFit)
-admin.site.register(TimeLessonFit)
-
+admin.site.register(TelegramUser)
 
 @admin.register(UserFit)
 class UserFitModelAdmin(ImportExportActionModelAdmin):
@@ -19,12 +17,12 @@ class UserFitModelAdmin(ImportExportActionModelAdmin):
 @admin.register(TrainerFit)
 class TrainerFitModelAdmin(ImportExportActionModelAdmin):
     resource_class = TrainerFitResource
-    search_fields = ['first_name', 'last_name', 'lesson']
+    search_fields = ['first_name', 'last_name']
     list_display = ['first_name', 'last_name']
 
 
-@admin.register(UserFitLesson)
-class TrainerFitModelAdmin(admin.ModelAdmin):
-    search_fields = ['user', 'lesson', 'trainer', 'date']
-    list_display = ['user', 'lesson', 'trainer', 'date']
-    list_filter = ('date','lesson', 'trainer')
+@admin.register(LessonFit)
+class UserFitModelAdmin(ImportExportActionModelAdmin):
+    resource_class = LessonFitResource
+    search_fields = ['title']
+    list_display = ['title', 'description']

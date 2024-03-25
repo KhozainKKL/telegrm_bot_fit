@@ -4,9 +4,33 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="adcea74b-aa53-4bda-be93-7a2577bc43ff" name="Changes" comment="create commands calendar and 1 sticker">
-      <change afterPath="$PROJECT_DIR$/main/README.md" afterDir="false" />
+    <list default="true" id="adcea74b-aa53-4bda-be93-7a2577bc43ff" name="Changes" comment="fix bags">
+      <change afterPath="$PROJECT_DIR$/main/main_table_admin/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/main_table_admin/admin.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/main_table_admin/apps.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/main_table_admin/migrations/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/main_table_admin/models.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/main_table_admin/tests.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/main_table_admin/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/main/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/bot/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/bot/apps.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/import_export/resourse.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/bot/import_export/resourse.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/logging/401182313" beforeDir="false" afterPath="$PROJECT_DIR$/main/bot/logging/401182313" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/main_bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/bot/main_bot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/migrations/0002_remove_trainerfit_lesson_trainerfit_lesson.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/migrations/0003_remove_lessonfit_time_lessonfit_time.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/migrations/0004_userfitlesson.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/migrations/0005_alter_lessonfit_title_alter_timelessonfit_time_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/migrations/0006_remove_userfit_actived_remove_userfit_created_at_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/bot/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/main/database/get_data_lesson.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/main/database/get_data_lesson.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/main/database/telegramuser_dao.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/main/database/telegramuser_dao.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/main/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/main/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/media/bot/расписание_25.03-31.03.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/media/bot/расписание_25.03-31.03_XUn3GBj.pdf" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,19 +61,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.main_bot.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "D:/Python/GitHub/telegrm_bot_fit/main/bot/migrations",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "vcs.Git"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.main_bot.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.settings.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Python/GitHub/telegrm_bot_fit/main/media/bot&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Python\GitHub\telegrm_bot_fit\main\media\bot" />
       <recent name="D:\Python\GitHub\telegrm_bot_fit\main\bot\migrations" />
       <recent name="D:\Python\GitHub\telegrm_bot_fit\main\management" />
     </key>
@@ -94,36 +119,72 @@
       <option name="project" value="LOCAL" />
       <updated>1710766546955</updated>
     </task>
-    <task id="LOCAL-00004" summary="create commands calendar and 1 sticker">
+    <task id="LOCAL-00004" summary="create middleware.py registration users">
       <option name="closed" value="true" />
-      <created>1710781797874</created>
+      <created>1710840676876</created>
       <option name="number" value="00004" />
       <option name="presentableId" value="LOCAL-00004" />
       <option name="project" value="LOCAL" />
-      <updated>1710781797874</updated>
+      <updated>1710840676876</updated>
     </task>
-    <task id="LOCAL-00005" summary="create commands calendar and 1 sticker">
+    <task id="LOCAL-00005" summary="create middleware.py registration users">
       <option name="closed" value="true" />
-      <created>1711178607730</created>
+      <created>1710843632382</created>
       <option name="number" value="00005" />
       <option name="presentableId" value="LOCAL-00005" />
       <option name="project" value="LOCAL" />
-      <updated>1711178607730</updated>
+      <updated>1710843632382</updated>
     </task>
-    <task id="LOCAL-00006" summary="create commands calendar and 1 sticker">
+    <task id="LOCAL-00006" summary="create middleware.py registration users">
       <option name="closed" value="true" />
-      <created>1711309618186</created>
+      <created>1710852729307</created>
       <option name="number" value="00006" />
       <option name="presentableId" value="LOCAL-00006" />
       <option name="project" value="LOCAL" />
-      <updated>1711309618186</updated>
+      <updated>1710852729307</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="fix bags">
+      <option name="closed" value="true" />
+      <created>1711003775143</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1711003775143</updated>
+    </task>
+    <task id="LOCAL-00008" summary="fix bags">
+      <option name="closed" value="true" />
+      <created>1711024472630</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1711024472630</updated>
+    </task>
+    <task id="LOCAL-00009" summary="fix bags">
+      <option name="closed" value="true" />
+      <created>1711032801642</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1711032801642</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="create commands run_bot.py&#10;initial django-grappelli" />
-    <MESSAGE value="create commands calendar and 1 sticker" />
-    <option name="LAST_COMMIT_MESSAGE" value="create commands calendar and 1 sticker" />
+    <MESSAGE value="create middleware.py registration users" />
+    <MESSAGE value="fix bags" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix bags" />
   </component>
 </project>
