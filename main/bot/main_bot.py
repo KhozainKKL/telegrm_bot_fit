@@ -7,7 +7,7 @@ from django.conf import settings
 from telebot.async_telebot import AsyncTeleBot
 
 from bot.example_text import helper, action
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 
 import calendar
 from bot.middleware import AddNewUserMiddleware
@@ -44,7 +44,7 @@ def get_telegram_user_sync(user_id):
         return None
 
 
-@bot.message_handler(commands=['group_lesson'])
+@bot.message_handler(regexp='Записаться на групповое занятие 🤸‍♂️')
 @require_authentication
 async def send_calendar(message):
     markup = InlineKeyboardMarkup(row_width=1)
@@ -181,7 +181,7 @@ async def send_calendar(message):
                                     message_id=call.message.message_id, reply_markup=markup)
 
 
-@bot.message_handler(commands=['schedule'])
+@bot.message_handler(regexp='Расписание и описание групповых занятий 🧘‍♂️')
 @require_authentication
 async def schedule(message):
     sent_message = await bot.send_message(message.chat.id, "Загружаем расписание занятий.")
@@ -197,9 +197,20 @@ async def schedule(message):
 
     # Удаляем сообщение о начале отправки файла
     await bot.delete_message(message.chat.id, sent_message.message_id)
+    markup = InlineKeyboardMarkup(row_width=1)
+    markup.add(
+        InlineKeyboardButton(text="Описание тренировок", callback_data="shedule_")
+    )
+    await bot.send_message(message.chat.id, "Подробное описание тренировок.", reply_markup=markup)
+
+    @bot.callback_query_handler(func=lambda call: call.data in ['shedule_'])
+    async def choose_schedule(call):
+        # result = await get_data_lesson(call.data)
+        pass
+        # TODO Доделать описание тренировок! (кнопки на каждую тренировку) + кнопка для массового описания
 
 
-@bot.message_handler(commands=['my_lesson'])
+@bot.message_handler(regexp='Список занятий на которые Вы записаны📆')
 @require_authentication
 async def my_lesson(message):
     data = await get_data_my_lesson(message)
@@ -269,4 +280,9 @@ async def my_lesson(message):
 @bot.message_handler(func=lambda message: True)
 @require_authentication
 async def echo_message(message):
-    await bot.send_message(message.chat.id, helper)
+    keyboard = ReplyKeyboardMarkup()
+    keyboard.add(KeyboardButton('Записаться на групповое занятие 🤸‍♂️'))
+    keyboard.add(KeyboardButton('Расписание и описание групповых занятий 🧘‍♂️'))
+    keyboard.add(KeyboardButton('Список занятий на которые Вы записаны📆'))
+
+    await bot.send_message(message.chat.id, helper, reply_markup=keyboard)

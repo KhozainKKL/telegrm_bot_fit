@@ -74,7 +74,7 @@ def get_data_my_lesson(query=None, data=None):
                 data = UserFitLesson.objects.filter(lesson=data)
                 data[0].delete()
     except Exception:
-        if query.text == '/my_lesson':
+        if query.text == 'Список занятий на которые Вы записаны📆':
             # Получаем пользователя Telegram
             user_tg = TelegramUser.objects.filter(telegram_user_id=query.from_user.id).values_list('id',
                                                                                                    flat=True).first()
