@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 @sync_to_async
 def get_data_lesson(call, data=None, message=None):
     try:
-        if call == "by_type":
+        if call == "by_type" or call == 'schedule_':
             result = list(LessonFit.objects.values_list('title', flat=True))
             return result
         elif call == "by_trainer":
@@ -25,6 +25,10 @@ def get_data_lesson(call, data=None, message=None):
             result_to = list(
                 MainTableAdmin.objects.filter(lesson__in=result).values_list('date', flat=True))
             return result_to
+        elif call.startswith('schedule_type_'):
+            result = list(
+                LessonFit.objects.filter(title=data))
+            return result[0]
         elif call.startswith('trainer_'):
             result = list(
                 TrainerFit.objects.filter(pk=data).values_list('id', flat=True))
@@ -38,7 +42,7 @@ def get_data_lesson(call, data=None, message=None):
 
 
     except Exception:
-        if call.text == '/schedule':
+        if call.text == 'Расписание и описание групповых занятий 🧘‍♂️':
             today = datetime.date.today()
             start_of_week = today - datetime.timedelta(days=today.weekday())
             end_of_week = start_of_week + datetime.timedelta(days=6)
@@ -84,4 +88,3 @@ def get_data_my_lesson(query=None, data=None):
             data_to = list(MainTableAdmin.objects.filter(pk__in=data))
             print(data_to)
             return data_to
-
