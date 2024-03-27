@@ -188,6 +188,11 @@ async def schedule(message):
     file_path = await get_data_lesson(message)
     if not file_path:
         await bot.delete_message(message.chat.id, sent_message.message_id)
+        await bot.send_message(message.chat.id, "Расписания еще нет.")
+        with open(f'bot/logging/{message.from_user.id}', 'a+', encoding='utf-8') as file:
+            file.write(f"[INFO]-[{datetime.datetime.now()}]: Расписания еще нет.\n")
+    if not file_path[1]:
+        await bot.delete_message(message.chat.id, sent_message.message_id)
         await bot.send_message(message.chat.id, "Расписания на следующую неделю еще нет.")
         with open(f'bot/logging/{message.from_user.id}', 'a+', encoding='utf-8') as file:
             file.write(f"[INFO]-[{datetime.datetime.now()}]: Расписания на следующую неделю еще нет.\n")
