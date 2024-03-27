@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 @sync_to_async
-def get_data_lesson(call, data=None, message=None):
+def get_data_lesson(call, data=None, message=None, relative_user=None):
     try:
         if call == "by_type" or call == 'schedule_':
             result = list(LessonFit.objects.values_list('title', flat=True))
@@ -36,26 +36,44 @@ def get_data_lesson(call, data=None, message=None):
                 MainTableAdmin.objects.filter(trainer__in=result).values_list('lesson__title', flat=True).distinct())
             return result_to
         elif call.startswith('date_'):
-            tmp = list(MainTableAdmin.objects.filter(date=data))
-            print(tmp)
-            return list(tmp)
+            result = {'state': True, 'tmp': None, 'relative_user': None}
+            if not relative_user:
+                get_card = TelegramUser.objects.get(telegram_user_id=message).card
+                get_user = UserFitLesson.objects.filter(user=get_card).values_list('lesson__lesson', flat=True)
+                get_user_lesson = list(MainTableAdmin.objects.filter(lesson__in=get_user).filter(date=data))
+                result['tmp'] = list(MainTableAdmin.objects.filter(date=data))
+                if get_user_lesson == result['tmp']:
+                    result['state'] = False
+                    result['relative_user'] = get_card.relative_user
+                print(result['tmp'])
+                return result
+            else:
+                # TODO Доделать.!!!
+                get_user = UserFitLesson.objects.filter(user=relative_user).values_list('lesson__lesson', flat=True)
+                get_user_lesson = list(MainTableAdmin.objects.filter(lesson__in=get_user).filter(date=data))
+                result['tmp'] = list(MainTableAdmin.objects.filter(date=data))
+                if get_user_lesson == result['tmp']:
+                    result['state'] = False
+                print(result['tmp'])
+                return result
 
 
     except Exception:
-        if call.text == 'Расписание и описание групповых занятий 🧘‍♂️':
-            result = []
-
-            today = datetime.date.today()
-            start_of_week = today - datetime.timedelta(days=today.weekday())
-            end_of_week = start_of_week + datetime.timedelta(days=6)
-            next_week_start = end_of_week + datetime.timedelta(days=1)
-            next_week_end = next_week_start + datetime.timedelta(days=6)
-            week_range_str = [start_of_week.strftime('%d.%m') + '-' + end_of_week.strftime('%d.%m'),
-                              next_week_start.strftime('%d.%m') + '-' + next_week_end.strftime('%d.%m')]
-            for week in week_range_str:
-                file = list(DateLessonFit.objects.filter(schedule__contains=week))
-                result.append(file)
-            return result
+        # if call.text == 'Расписание и описание групповых занятий 🧘‍♂️':
+        #     result = []
+        #
+        #     today = datetime.date.today()
+        #     start_of_week = today - datetime.timedelta(days=today.weekday())
+        #     end_of_week = start_of_week + datetime.timedelta(days=6)
+        #     next_week_start = end_of_week + datetime.timedelta(days=1)
+        #     next_week_end = next_week_start + datetime.timedelta(days=6)
+        #     week_range_str = [start_of_week.strftime('%d.%m') + '-' + end_of_week.strftime('%d.%m'),
+        #                       next_week_start.strftime('%d.%m') + '-' + next_week_end.strftime('%d.%m')]
+        #     for week in week_range_str:
+        #         file = list(DateLessonFit.objects.filter(schedule__contains=week))
+        #         result.append(file)
+        #     return result
+        pass
 
 
 @sync_to_async

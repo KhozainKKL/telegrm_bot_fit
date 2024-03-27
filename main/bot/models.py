@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class TelegramUser(models.Model):
+class   TelegramUser(models.Model):
     class Meta:
         verbose_name = 'Пользователь тлеграмма'
         verbose_name_plural = 'Пользователи телеграмма'
@@ -28,6 +28,7 @@ class UserFit(models.Model):
     first_name = models.CharField(max_length=20, blank=True, null=True, verbose_name='Имя', db_index=True)
     last_name = models.CharField(max_length=20, blank=True, null=True, verbose_name='Фамилия', db_index=True)
     phone = models.CharField(max_length=16, verbose_name='Телефон')
+    relative_user = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, verbose_name='Родственник')
 
     def __str__(self):
         return f'{self.card}-[{self.first_name} {self.last_name}]'

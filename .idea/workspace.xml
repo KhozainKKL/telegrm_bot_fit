@@ -4,10 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="adcea74b-aa53-4bda-be93-7a2577bc43ff" name="Changes" comment="change custom admin">
+    <list default="true" id="adcea74b-aa53-4bda-be93-7a2577bc43ff" name="Changes" comment="fix bags">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/bot/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/bot/logging/401182313" beforeDir="false" afterPath="$PROJECT_DIR$/main/bot/logging/401182313" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/bot/main_bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/bot/main_bot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/bot/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/main/database/get_data_lesson.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/main/database/get_data_lesson.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -182,7 +184,31 @@
       <option name="project" value="LOCAL" />
       <updated>1711533679757</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="fix bags">
+      <option name="closed" value="true" />
+      <created>1711534613598</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1711534613598</updated>
+    </task>
+    <task id="LOCAL-00015" summary="fix bags">
+      <option name="closed" value="true" />
+      <created>1711534797143</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1711534797143</updated>
+    </task>
+    <task id="LOCAL-00016" summary="fix bags">
+      <option name="closed" value="true" />
+      <created>1711534866866</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1711534866866</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -199,8 +225,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="create commands run_bot.py&#10;initial django-grappelli" />
     <MESSAGE value="create middleware.py registration users" />
-    <MESSAGE value="fix bags" />
     <MESSAGE value="change custom admin" />
-    <option name="LAST_COMMIT_MESSAGE" value="change custom admin" />
+    <MESSAGE value="fix bags" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix bags" />
   </component>
 </project>
