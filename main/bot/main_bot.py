@@ -296,7 +296,7 @@ async def schedule(message):
 @require_authentication
 async def my_lesson(message):
     data = await get_data_my_lesson(message)
-    if not data['user'] and not data['relative_user']:
+    if not data['user']:
         await bot.send_message(message.chat.id, "Вы пока не записаны на занятия.")
     elif data['user']:
         # Создаем клавиатуру для отображения списка занятий
