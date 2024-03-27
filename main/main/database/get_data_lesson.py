@@ -36,7 +36,7 @@ def get_data_lesson(call, data=None, message=None, relative_user=None):
                 MainTableAdmin.objects.filter(trainer__in=result).values_list('lesson__title', flat=True).distinct())
             return result_to
         elif call.startswith('date_'):
-            result = {'state': True, 'tmp': None, 'relative_user': None}
+            result = {'state': True, 'tmp': None, 'relative_user': None, 'state_relative_user': True}
             if not relative_user:
                 get_card = TelegramUser.objects.get(telegram_user_id=message).card
                 get_user = UserFitLesson.objects.filter(user=get_card).values_list('lesson__lesson', flat=True)
@@ -45,45 +45,55 @@ def get_data_lesson(call, data=None, message=None, relative_user=None):
                 if get_user_lesson == result['tmp']:
                     result['state'] = False
                     result['relative_user'] = get_card.relative_user
-                print(result['tmp'])
+                print(result)
                 return result
             else:
-                # TODO Доделать.!!!
+                get_card = UserFit.objects.get(id=relative_user)
                 get_user = UserFitLesson.objects.filter(user=relative_user).values_list('lesson__lesson', flat=True)
                 get_user_lesson = list(MainTableAdmin.objects.filter(lesson__in=get_user).filter(date=data))
                 result['tmp'] = list(MainTableAdmin.objects.filter(date=data))
                 if get_user_lesson == result['tmp']:
-                    result['state'] = False
-                print(result['tmp'])
+                    result['state_relative_user'] = False
+                    result['relative_user'] = None
+                elif get_user_lesson != result['tmp']:
+                    result['relative_user'] = get_card
+                print(result)
                 return result
 
 
     except Exception:
-        # if call.text == 'Расписание и описание групповых занятий 🧘‍♂️':
-        #     result = []
-        #
-        #     today = datetime.date.today()
-        #     start_of_week = today - datetime.timedelta(days=today.weekday())
-        #     end_of_week = start_of_week + datetime.timedelta(days=6)
-        #     next_week_start = end_of_week + datetime.timedelta(days=1)
-        #     next_week_end = next_week_start + datetime.timedelta(days=6)
-        #     week_range_str = [start_of_week.strftime('%d.%m') + '-' + end_of_week.strftime('%d.%m'),
-        #                       next_week_start.strftime('%d.%m') + '-' + next_week_end.strftime('%d.%m')]
-        #     for week in week_range_str:
-        #         file = list(DateLessonFit.objects.filter(schedule__contains=week))
-        #         result.append(file)
-        #     return result
-        pass
+        if call.text == 'Расписание и описание групповых занятий 🧘‍♂️':
+            result = []
+
+            today = datetime.date.today()
+            start_of_week = today - datetime.timedelta(days=today.weekday())
+            end_of_week = start_of_week + datetime.timedelta(days=6)
+            next_week_start = end_of_week + datetime.timedelta(days=1)
+            next_week_end = next_week_start + datetime.timedelta(days=6)
+            week_range_str = [start_of_week.strftime('%d.%m') + '-' + end_of_week.strftime('%d.%m'),
+                              next_week_start.strftime('%d.%m') + '-' + next_week_end.strftime('%d.%m')]
+            for week in week_range_str:
+                file = list(DateLessonFit.objects.filter(schedule__contains=week))
+                result.append(file)
+            return result
 
 
 @sync_to_async
-def set_data_user_lesson(message, data):
-    tmp = MainTableAdmin.objects.filter(date=data).first()
-    user_tg = TelegramUser.objects.filter(telegram_user_id=message.from_user.id).values_list('id', flat=True).first()
-    user_fit = UserFit.objects.get(id=user_tg)
-    result, created = UserFitLesson.objects.get_or_create(user=user_fit, lesson=tmp)
-    tmp.number_of_recorded += 1
-    tmp.save()
+def set_data_user_lesson(message, data, relative_user=None):
+    if not relative_user:
+        tmp = MainTableAdmin.objects.filter(date=data).first()
+        user_tg = TelegramUser.objects.filter(telegram_user_id=message.from_user.id).values_list('id',
+                                                                                                 flat=True).first()
+        user_fit = UserFit.objects.get(id=user_tg)
+        result, created = UserFitLesson.objects.get_or_create(user=user_fit, lesson=tmp)
+        tmp.number_of_recorded += 1
+        tmp.save()
+    elif relative_user:
+        tmp = MainTableAdmin.objects.filter(date=data).first()
+        user_fit = UserFit.objects.get(id=relative_user)
+        result, created = UserFitLesson.objects.get_or_create(user=user_fit, lesson=tmp)
+        tmp.number_of_recorded += 1
+        tmp.save()
 
 
 @sync_to_async
@@ -102,12 +112,15 @@ def get_data_my_lesson(query=None, data=None):
                 data[0].delete()
     except Exception:
         if query.text == 'Занятия на которые Вы записаны📆':
+            result = {'user': None, 'relative_user': None}
             # Получаем пользователя Telegram
             user_tg = TelegramUser.objects.filter(telegram_user_id=query.from_user.id).values_list('id',
                                                                                                    flat=True).first()
             user_fit = UserFit.objects.get(id=user_tg)
             # Получаем список занятий, на которые записан пользователь
             data = list(UserFitLesson.objects.filter(user=user_fit).values_list('lesson', flat=True))
-            data_to = list(MainTableAdmin.objects.filter(pk__in=data))
-            print(data_to)
-            return data_to
+            result['user'] = list(MainTableAdmin.objects.filter(pk__in=data))
+            relative_ = list(UserFitLesson.objects.filter(user=user_fit.relative_user).values_list('lesson', flat=True))
+            result['relative_user'] = list(MainTableAdmin.objects.filter(pk__in=relative_))
+            print(result)
+            return result

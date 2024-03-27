@@ -163,7 +163,6 @@ async def send_calendar(message):
             date_relative = None
 
         data = await get_data_lesson(call.data, data=date, message=call.message.chat.id, relative_user=date_relative)
-        print(data["relative_user"].pk)
         if not data['state'] and data['relative_user']:
             keyboard_relative_user = InlineKeyboardMarkup(row_width=1)
             keyboard_relative_user.add(
@@ -173,7 +172,7 @@ async def send_calendar(message):
             await bot.edit_message_text(chat_id=call.message.chat.id,
                                         text="<blockquote>️<i>Вы уже записаны на текущее занятие. Вы можете записать "
                                              "своего родственника, <b>если он является посетителем Нашего фитнес-зала</b>.\n"
-                                             "После его записи ему прийдет уведомление.</i></blockquote>️"
+                                             "После его записи ему прейдет уведомление.</i></blockquote>️"
                                              "Ваш родственник:",
                                         message_id=call.message.message_id, reply_markup=keyboard_relative_user)
         elif not data['state'] and not data['relative_user']:
@@ -182,19 +181,14 @@ async def send_calendar(message):
             await bot.edit_message_text(chat_id=call.message.chat.id,
                                         text="<blockquote>️<i>Вы уже записаны на текущее занятие. Вы можете записать "
                                              "своего родственника, <b>если он является посетителем Нашего фитнес-клуба</b>.\n"
-                                             "После его записи ему прийдет уведомление.</i></blockquote>️"
+                                             "После его записи ему прейдет уведомление.</i></blockquote>️"
                                              "У Вас нет родственников посещающих Наш фитнес-клуб.",
                                         message_id=call.message.message_id, reply_markup=keyboard_no_relative_user)
-            # TODO (Может сделать) предложения пользователю для приглашения родственника с купоном для скидки.
-
-        elif data['state']:
-            await set_data_user_lesson(call, date)
+        if data['state'] and not date_relative:
+            await set_data_user_lesson(call, date, relative_user=date_relative)
             # Обработка выбора пользователя по дате
             formatted_date = (f"{data['tmp'][0].date.strftime('%d')} {MONTHS_RU[data['tmp'][0].date.month]} "
                               f"{data['tmp'][0].date.strftime('%Y')} г. {data['tmp'][0].date.strftime('%H:%M')}")
-            await bot.answer_callback_query(call.id, f"Вы записаны к тренеру: {data['tmp'][0].trainer}\n"
-                                                     f"На занятие: {data['tmp'][0].lesson}\n"
-                                                     f" {formatted_date}")
             await bot.edit_message_text(chat_id=call.message.chat.id,
                                         text=f"<b>Вы записаны к тренеру: {data['tmp'][0].trainer}\n"
                                              f"На занятие: {data['tmp'][0].lesson}\n"
@@ -203,7 +197,33 @@ async def send_calendar(message):
                                    sticker='CAACAgIAAxkBAAELtpdl9WfB4snERAkVgZOph6nRzVHAYwACqQADFkJrCiSoJ_sldvhYNAQ')
             with open(f'bot/logging/{call.message.chat.id}', 'a+', encoding='utf-8') as file:
                 file.write(
-                    f"[INFO]-[{datetime.datetime.now()}]:Вы записаны к тренеру: {data['tmp'][0].trainer} - На занятие: {data['tmp'][0].lesson} - {formatted_date}\n")
+                    f"[INFO]-[{datetime.datetime.now()}]:Вы записаны к тренеру: "
+                    f"{data['tmp'][0].trainer} - На занятие: {data['tmp'][0].lesson} - {formatted_date}\n")
+        elif data['state'] and date_relative and data['state_relative_user']:
+            await set_data_user_lesson(call, date, relative_user=date_relative)
+            # Обработка выбора пользователя по дате
+            formatted_date = (f"{data['tmp'][0].date.strftime('%d')} {MONTHS_RU[data['tmp'][0].date.month]} "
+                              f"{data['tmp'][0].date.strftime('%Y')} г. {data['tmp'][0].date.strftime('%H:%M')}")
+            await bot.edit_message_text(chat_id=call.message.chat.id,
+                                        text=f"<b>Родственник {data['relative_user'].first_name} "
+                                             f"{data['relative_user'].last_name}\n записан(а) к тренеру: {data['tmp'][0].trainer}\n"
+                                             f"На занятие: {data['tmp'][0].lesson}\n"
+                                             f" {formatted_date}</b>", message_id=call.message.message_id)
+            await bot.send_sticker(call.message.chat.id,
+                                   sticker='CAACAgIAAxkBAAELtpdl9WfB4snERAkVgZOph6nRzVHAYwACqQADFkJrCiSoJ_sldvhYNAQ')
+            with open(f'bot/logging/{call.message.chat.id}', 'a+', encoding='utf-8') as file:
+                file.write(
+                    f"[INFO]-[{datetime.datetime.now()}]:Родственник {data['relative_user'].first_name} "
+                    f"{data['relative_user'].last_name} записан(а) к тренеру: {data['tmp'][0].trainer} - На занятие: {data['tmp'][0].lesson} - {formatted_date}\n")
+        elif data['state'] and date_relative and not data['state_relative_user']:
+            keyboard_no_relative_user = InlineKeyboardMarkup(row_width=1)
+            keyboard_no_relative_user.row(InlineKeyboardButton(text="Назад ⬅️", callback_data="back_to_month"))
+            await bot.edit_message_text(chat_id=call.message.chat.id,
+                                        text="<blockquote>️<i>Вы уже записаны на текущее занятие. Вы можете записать "
+                                             "своего родственника, <b>если он является посетителем Нашего фитнес-клуба</b>.\n"
+                                             "После его записи ему прейдет уведомление.</i></blockquote>️"
+                                             "Ваш родственник уже записан на это занятие.",
+                                        message_id=call.message.message_id, reply_markup=keyboard_no_relative_user)
 
     @bot.callback_query_handler(func=lambda call: call.data == "back_to_month")
     async def back_to_month(call):
@@ -276,12 +296,12 @@ async def schedule(message):
 @require_authentication
 async def my_lesson(message):
     data = await get_data_my_lesson(message)
-    if not data:
+    if not data['user'] and not data['relative_user']:
         await bot.send_message(message.chat.id, "Вы пока не записаны на занятия.")
-    else:
+    elif data['user']:
         # Создаем клавиатуру для отображения списка занятий
         keyboard = InlineKeyboardMarkup(row_width=1)
-        for user_lesson in data:
+        for user_lesson in data['user']:
             formatted_date = (f"{user_lesson.date.strftime('%d')} "
                               f"{MONTHS_RU[user_lesson.date.month]} {user_lesson.date.strftime('%Y')} г. "
                               f"{user_lesson.date.strftime('%H:%M')}")
@@ -294,6 +314,22 @@ async def my_lesson(message):
 
         # Отправляем сообщение с кнопками списка занятий
         await bot.send_message(message.chat.id, "Список ваших занятий:", reply_markup=keyboard)
+    if data['relative_user']:
+        # Создаем клавиатуру для отображения списка занятий
+        keyboard = InlineKeyboardMarkup(row_width=1)
+        for user_lesson in data['relative_user']:
+            formatted_date = (f"{user_lesson.date.strftime('%d')} "
+                              f"{MONTHS_RU[user_lesson.date.month]} {user_lesson.date.strftime('%Y')} г. "
+                              f"{user_lesson.date.strftime('%H:%M')}")
+            # Формируем название занятия для кнопки
+            lesson_title = f"{user_lesson.lesson} - {formatted_date}"
+            # Формируем callback_data для кнопки
+            callback_data = f"lesson_{user_lesson.pk}"
+            # Добавляем кнопку в клавиатуру
+            keyboard.add(InlineKeyboardButton(text=lesson_title, callback_data=callback_data))
+
+        # Отправляем сообщение с кнопками списка занятий
+        await bot.send_message(message.chat.id, "Список занятий Вашего родственника:", reply_markup=keyboard)
 
     @bot.callback_query_handler(lambda query: query.data.startswith('lesson_'))
     async def lesson_info(query):
