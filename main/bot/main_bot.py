@@ -51,7 +51,7 @@ async def send_calendar(message):
     markup.add(
         InlineKeyboardButton(text="По виду занятия", callback_data="by_type"),
         InlineKeyboardButton(text="К тренеру", callback_data="by_trainer"),
-        InlineKeyboardButton(text="Неважно", callback_data="any")
+        InlineKeyboardButton(text="По дате и времени", callback_data="any")
     )
     await bot.send_message(message.chat.id, "Как вы хотите записаться на групповое занятие?", reply_markup=markup)
 
@@ -192,9 +192,10 @@ async def schedule(message):
         with open(f'bot/logging/{message.from_user.id}', 'a+', encoding='utf-8') as file:
             file.write(f"[INFO]-[{datetime.datetime.now()}]: Расписания на следующую неделю еще нет.\n")
     else:
-        async with aiofiles.open(file_path[0].schedule.path, 'rb') as file:
-            # Отправляем документ пользователю
-            await bot.send_document(message.chat.id, file)
+        for week in file_path:
+            async with aiofiles.open(week[0].schedule.path, 'rb') as file:
+                # Отправляем документ пользователю
+                await bot.send_document(message.chat.id, file)
         with open(f'bot/logging/{message.from_user.id}', 'a+', encoding='utf-8') as file:
             file.write(f"[INFO]-[{datetime.datetime.now()}]:Пользователь запросил расписание занятий на неделю.\n")
 
