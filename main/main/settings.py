@@ -33,7 +33,6 @@ ALLOWED_HOSTS = ['*']
 TG_API_KEY = env.str('TG_API_KEY')
 
 INSTALLED_APPS = [
-    'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -61,7 +60,7 @@ ROOT_URLCONF = 'main.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -160,16 +159,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-}
-
-
-SUIT_CONFIG = {
-    "MENU": (
-        {'label': "Example", "icon": 'icon-ok', "models": [
-            {"label": "for all", 'url': '/example/'},
-            {"label": "for stuff", 'url': '/admin/example/'},
-        ]},
-    )
 }
 
 

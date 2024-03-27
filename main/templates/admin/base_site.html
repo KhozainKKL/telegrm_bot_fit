@@ -1,0 +1,43 @@
+{% extends "admin/base.html" %}
+{%load static%}
+{% block extrastyle%}
+  <style>
+    .main {
+      background-image: linear-gradient(33deg, #4299b5, #f1b7b7);
+    }
+    #content-main caption {
+      border-radius: 15px 15px 0 0;
+    }
+    #content-main .app-bot, #content-main .app-main_table_admin, #content-main .app-auth, #changelist {
+        border-radius: 45px;
+    }
+     .model-trainerfit, .field-number_of_recorded,fieldset, .field-check_canceled_description {
+      border-radius: 0 0 8px 8px;
+    }
+    #content-related {
+       border-radius: 45px;
+    }
+    #content h1 {
+      color: white;
+      text-shadow: 10px 4px 7px #040000;
+    }
+    .toggle-nav-sidebar {
+      border-radius: 15px 0 0 15px;
+    }
+    #nav-sidebar, #changelist-filter {
+      border-radius: 0 15px 15px 0;
+    }
+
+  </style>
+{%endblock%}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ 'Фитнес-зал LoftGym' }}</a></h1>
+{% if user.is_anonymous %}
+  {% include "admin/color_theme_toggle.html" %}
+{% endif %}
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
