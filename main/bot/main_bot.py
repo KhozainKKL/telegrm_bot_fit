@@ -1,19 +1,17 @@
-import datetime
-
-import aiofiles
 import telebot
-from asgiref.sync import sync_to_async
+import datetime
+import aiofiles
 from django.conf import settings
+from bot.models import TelegramUser
+from bot.example_text import helper
+from django.dispatch import receiver
+from asgiref.sync import sync_to_async
+from main_table_admin.models import MONTHS_RU, MainTableAdmin
 from telebot.async_telebot import AsyncTeleBot
-
-from bot.example_text import helper, action
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
-
-import calendar
+from django.db.models.signals import post_save, post_init
 from bot.middleware import AddNewUserMiddleware
-from bot.models import TelegramUser, UserFit, LessonFit, TrainerFit
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 from main.database.get_data_lesson import get_data_lesson, set_data_user_lesson, get_data_my_lesson
-from main_table_admin.models import MONTHS_RU
 
 bot = AsyncTeleBot(settings.TG_API_KEY, parse_mode='HTML')
 telebot.logger.setLevel(settings.LOGLEVEL)
@@ -373,6 +371,17 @@ async def my_lesson(message):
         await bot.edit_message_text(chat_id=query.message.chat.id, text="Вы успешно отписались от занятия.",
                                     message_id=query.message.message_id)
         # Повторно вызываем функцию отображения списка занятий
+
+
+async def canceled_lesson_post_message_users(data):
+    message = (
+        f'<blockquote>️<i>⚠️Внимание: Пользовательское оповещение.\n '
+        f'<b>Занятие:</b> {data["lesson_title"][0]}\n'
+        f'<b>Время:</b> {data["lesson"][0].date}\n'
+        f' <b>ОТМЕНЕНО!😔</b></i></blockquote>️\n'
+        f' <b>Причина:</b> {data["lesson"][0].check_canceled_description}')
+    for user in data['tg_users']:
+        await bot.send_message(chat_id=user, text=message)
 
 
 @bot.message_handler(func=lambda message: True)

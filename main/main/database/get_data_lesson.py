@@ -3,6 +3,7 @@ import logging
 from asgiref.sync import sync_to_async
 from bot.models import LessonFit, TrainerFit, TelegramUser, UserFit, DateLessonFit
 from main_table_admin.models import UserFitLesson, MainTableAdmin, MONTHS_RU
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
@@ -17,13 +18,15 @@ def get_data_lesson(call, data=None, message=None, relative_user=None):
             result = list(TrainerFit.objects.all())
             return result
         elif call == "any":
-            result = list(MainTableAdmin.objects.all().values_list('date', flat=True))
+            # result = list(MainTableAdmin.objects.all().values_list('date', flat=True))
+            result = list(MainTableAdmin.objects.filter(date__gte=timezone.now()).values_list('date', flat=True))
             return result
         elif call.startswith('type_') or call.startswith('trainers_lesson_'):
             result = list(
                 LessonFit.objects.filter(title=data).values_list('id', flat=True).all())
             result_to = list(
-                MainTableAdmin.objects.filter(lesson__in=result).values_list('date', flat=True))
+                MainTableAdmin.objects.filter(lesson__in=result, date__gte=timezone.now()).values_list('date',
+                                                                                                       flat=True))
             return result_to
         elif call.startswith('schedule_type_'):
             result = list(
@@ -118,9 +121,14 @@ def get_data_my_lesson(query=None, data=None):
                                                                                                    flat=True).first()
             user_fit = UserFit.objects.get(id=user_tg)
             # Получаем список занятий, на которые записан пользователь
-            data = list(UserFitLesson.objects.filter(user=user_fit).values_list('lesson', flat=True))
+            data = list(
+                UserFitLesson.objects.filter(user=user_fit, lesson__date__gte=timezone.now()).values_list('lesson',
+                                                                                                          flat=True))
             result['user'] = list(MainTableAdmin.objects.filter(pk__in=data))
-            relative_ = list(UserFitLesson.objects.filter(user=user_fit.relative_user).values_list('lesson', flat=True))
+            relative_ = list(
+                UserFitLesson.objects.filter(user=user_fit.relative_user, lesson__date__gte=timezone.now()).values_list(
+                    'lesson', flat=True))
             result['relative_user'] = list(MainTableAdmin.objects.filter(pk__in=relative_))
             print(result)
             return result
+

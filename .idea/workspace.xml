@@ -8,8 +8,9 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/bot/logging/401182313" beforeDir="false" afterPath="$PROJECT_DIR$/main/bot/logging/401182313" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/bot/main_bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/bot/main_bot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/bot/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/main/database/get_data_lesson.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/main/database/get_data_lesson.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/main_table_admin/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/main_table_admin/admin.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,22 +41,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.main_bot.executor": "Debug",
-    "Python.settings.executor": "Debug",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "D:/Python/GitHub/telegrm_bot_fit/main/media/bot",
-    "settings.editor.selected.configurable": "editor.preferences.fonts.default"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.main_bot.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.settings.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Python/GitHub/telegrm_bot_fit/main/media&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Python\GitHub\telegrm_bot_fit\main\media" />
+      <recent name="D:\Python\GitHub\telegrm_bot_fit\main\templates\admin" />
       <recent name="D:\Python\GitHub\telegrm_bot_fit\main\media\bot" />
       <recent name="D:\Python\GitHub\telegrm_bot_fit\main\bot\migrations" />
       <recent name="D:\Python\GitHub\telegrm_bot_fit\main\management" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Python\GitHub\telegrm_bot_fit\main\static\admin\css" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -146,7 +152,63 @@
       <option name="project" value="LOCAL" />
       <updated>1711032801642</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="fix bags">
+      <option name="closed" value="true" />
+      <created>1711432148133</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1711432148133</updated>
+    </task>
+    <task id="LOCAL-00011" summary="change custom admin">
+      <option name="closed" value="true" />
+      <created>1711522737026</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1711522737026</updated>
+    </task>
+    <task id="LOCAL-00012" summary="change custom admin">
+      <option name="closed" value="true" />
+      <created>1711533525360</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1711533525360</updated>
+    </task>
+    <task id="LOCAL-00013" summary="change custom admin">
+      <option name="closed" value="true" />
+      <created>1711533679757</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1711533679757</updated>
+    </task>
+    <task id="LOCAL-00014" summary="fix bags">
+      <option name="closed" value="true" />
+      <created>1711534613598</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1711534613598</updated>
+    </task>
+    <task id="LOCAL-00015" summary="fix bags">
+      <option name="closed" value="true" />
+      <created>1711534797143</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1711534797143</updated>
+    </task>
+    <task id="LOCAL-00016" summary="fix bags">
+      <option name="closed" value="true" />
+      <created>1711534866866</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1711534866866</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -163,6 +225,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="create commands run_bot.py&#10;initial django-grappelli" />
     <MESSAGE value="create middleware.py registration users" />
+    <MESSAGE value="change custom admin" />
     <MESSAGE value="fix bags" />
     <option name="LAST_COMMIT_MESSAGE" value="fix bags" />
   </component>
