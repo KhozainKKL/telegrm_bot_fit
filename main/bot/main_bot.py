@@ -184,19 +184,20 @@ async def send_calendar(message):
                                         message_id=call.message.message_id, reply_markup=keyboard_no_relative_user)
         if data['state'] and not date_relative:
             await set_data_user_lesson(call, date, relative_user=date_relative)
-            # Обработка выбора пользователя по дате
-            formatted_date = (f"{data['tmp'][0].date.strftime('%d')} {MONTHS_RU[data['tmp'][0].date.month]} "
-                              f"{data['tmp'][0].date.strftime('%Y')} г. {data['tmp'][0].date.strftime('%H:%M')}")
-            await bot.edit_message_text(chat_id=call.message.chat.id,
-                                        text=f"<b>Вы записаны к тренеру: {data['tmp'][0].trainer}\n"
-                                             f"На занятие: {data['tmp'][0].lesson}\n"
-                                             f" {formatted_date}</b>", message_id=call.message.message_id)
-            await bot.send_sticker(call.message.chat.id,
-                                   sticker='CAACAgIAAxkBAAELtpdl9WfB4snERAkVgZOph6nRzVHAYwACqQADFkJrCiSoJ_sldvhYNAQ')
-            with open(f'bot/logging/{call.message.chat.id}', 'a+', encoding='utf-8') as file:
-                file.write(
-                    f"[INFO]-[{datetime.datetime.now()}]:Вы записаны к тренеру: "
-                    f"{data['tmp'][0].trainer} - На занятие: {data['tmp'][0].lesson} - {formatted_date}\n")
+            if not data['tmp'][0].check_canceled:
+                # Обработка выбора пользователя по дате
+                formatted_date = (f"{data['tmp'][0].date.strftime('%d')} {MONTHS_RU[data['tmp'][0].date.month]} "
+                                  f"{data['tmp'][0].date.strftime('%Y')} г. {data['tmp'][0].date.strftime('%H:%M')}")
+                await bot.edit_message_text(chat_id=call.message.chat.id,
+                                            text=f"<b>Вы записаны к тренеру: {data['tmp'][0].trainer}\n"
+                                                 f"На занятие: {data['tmp'][0].lesson}\n"
+                                                 f" {formatted_date}</b>", message_id=call.message.message_id)
+                await bot.send_sticker(call.message.chat.id,
+                                       sticker='CAACAgIAAxkBAAELtpdl9WfB4snERAkVgZOph6nRzVHAYwACqQADFkJrCiSoJ_sldvhYNAQ')
+                with open(f'bot/logging/{call.message.chat.id}', 'a+', encoding='utf-8') as file:
+                    file.write(
+                        f"[INFO]-[{datetime.datetime.now()}]:Вы записаны к тренеру: "
+                        f"{data['tmp'][0].trainer} - На занятие: {data['tmp'][0].lesson} - {formatted_date}\n")
         elif data['state'] and date_relative and data['state_relative_user']:
             await set_data_user_lesson(call, date, relative_user=date_relative)
             # Обработка выбора пользователя по дате
@@ -374,14 +375,14 @@ async def my_lesson(message):
 
 
 async def canceled_lesson_post_message_users(data):
-    message = (
+    message_help = (
         f'<blockquote>️<i>⚠️Внимание: Пользовательское оповещение.\n '
         f'<b>Занятие:</b> {data["lesson_title"][0]}\n'
         f'<b>Время:</b> {data["lesson"][0].date}\n'
         f' <b>ОТМЕНЕНО!😔</b></i></blockquote>️\n'
         f' <b>Причина:</b> {data["lesson"][0].check_canceled_description}')
     for user in data['tg_users']:
-        await bot.send_message(chat_id=user, text=message)
+        await bot.send_message(chat_id=user, text=message_help)
 
 
 @bot.message_handler(func=lambda message: True)
