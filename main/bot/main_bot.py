@@ -83,7 +83,8 @@ async def send_calendar(message):
         # Отображаем доступные даты занятий
         markup = InlineKeyboardMarkup(row_width=1)
         for lesson in dates['lesson']:
-            if lesson.number_of_recorded >= lesson.max_number_of_recorded - 3:
+            if_lesson_check = len(lesson.max_number_of_recorded) - len(lesson.number_of_recorded)
+            if if_lesson_check <= 3:
                 formatted_date = f"{lesson.date.strftime('%d')} {MONTHS_RU[lesson.date.month]} {lesson.date.strftime('%Y')} г. {lesson.date.strftime('%H:%M')}"
                 lesson_check.append(formatted_date)
         for date in dates['date']:
@@ -141,7 +142,8 @@ async def send_calendar(message):
         # Отображаем доступные даты занятий
         markup = InlineKeyboardMarkup(row_width=1)
         for lesson in data['lesson']:
-            if lesson.number_of_recorded >= lesson.max_number_of_recorded - 3:
+            if_lesson_check = len(lesson.max_number_of_recorded) - len(lesson.number_of_recorded)
+            if if_lesson_check <= 3:
                 formatted_date = f"{lesson.date.strftime('%d')} {MONTHS_RU[lesson.date.month]} {lesson.date.strftime('%Y')} г. {lesson.date.strftime('%H:%M')}"
                 lesson_check.append(formatted_date)
         for types in data['date']:
@@ -163,7 +165,8 @@ async def send_calendar(message):
         lesson_check = []
         markup = InlineKeyboardMarkup(row_width=1)
         for lesson in dates['lesson']:
-            if lesson.number_of_recorded >= lesson.max_number_of_recorded - 3:
+            if_lesson_check = len(lesson.max_number_of_recorded) - len(lesson.number_of_recorded)
+            if if_lesson_check <= 3:
                 formatted_date = f"{lesson.date.strftime('%d')} {MONTHS_RU[lesson.date.month]} {lesson.date.strftime('%Y')} г. {lesson.date.strftime('%H:%M')}"
                 lesson_check.append(formatted_date)
         for date in dates['date']:
