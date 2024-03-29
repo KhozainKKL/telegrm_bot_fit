@@ -20,6 +20,7 @@ class MainTableAdmin(models.Model):
     trainer = models.ForeignKey(TrainerFit, on_delete=models.CASCADE, verbose_name='Тренер')
     week_schedule = models.ForeignKey(DateLessonFit, on_delete=models.CASCADE, verbose_name='Недельное расписание')
     number_of_recorded = models.PositiveSmallIntegerField(default=0, verbose_name='Количество записанных на занятие')
+    max_number_of_recorded = models.PositiveSmallIntegerField(default=10, verbose_name='Макс. органичение по записи')
     check_canceled = models.BooleanField(default=False, verbose_name='Отменить занятие?')
     check_canceled_description = models.CharField(max_length=255, blank=True, null=True,
                                                   verbose_name='Причина отмены занятия')

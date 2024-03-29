@@ -77,19 +77,28 @@ async def send_calendar(message):
     async def handle_lesson_type(call):
         # Получаем выбранный тип занятия из call.data
         lesson_type = call.data.split('_')[1]
+        lesson_check = []
         # Получаем даты занятий для выбранного типа занятия
         dates = await get_data_lesson(call.data, data=lesson_type)
         # Отображаем доступные даты занятий
         markup = InlineKeyboardMarkup(row_width=1)
-        for date in dates:
+        for lesson in dates['lesson']:
+            if lesson.number_of_recorded >= lesson.max_number_of_recorded - 3:
+                formatted_date = f"{lesson.date.strftime('%d')} {MONTHS_RU[lesson.date.month]} {lesson.date.strftime('%Y')} г. {lesson.date.strftime('%H:%M')}"
+                lesson_check.append(formatted_date)
+        for date in dates['date']:
             formatted_date = f"{date.strftime('%d')} {MONTHS_RU[date.month]} {date.strftime('%Y')} г. {date.strftime('%H:%M')}"
             markup.add(InlineKeyboardButton(text=str(formatted_date), callback_data=f"date_{date}"))
         markup.row(InlineKeyboardButton(text="Назад ⬅️", callback_data="back_to_month"))
         # Отправляем сообщение с выбором даты занятия
-        await bot.edit_message_text(chat_id=call.message.chat.id,
-                                    text="<blockquote>️<i>Если кнопка не активна, то запись "
-                                         "на занятие закрыта.</i></blockquote>\n Выберите дату занятия:",
-                                    message_id=call.message.message_id, reply_markup=markup)
+        if lesson_check:
+            await bot.edit_message_text(
+                f"<blockquote>️<i> Обратите внимание, что на занятие(я): \n<b>{', '.join(lesson_check)}\n"
+                f"осталось мало мест.</b> </i></blockquote>\nВыберите дату занятия:",
+                call.message.chat.id, call.message.message_id, reply_markup=markup)
+        elif not lesson_check:
+            await bot.edit_message_text(f"Выберите дату занятия:", call.message.chat.id, call.message.message_id,
+                                        reply_markup=markup)
 
     async def choose_by_trainer(message, trainers):
         # Получаем всех тренеров из базы данных
@@ -127,30 +136,48 @@ async def send_calendar(message):
         # Получаем выбранный тип занятия из call.data
         lesson = call.data.split('_')[2]
         # Получаем даты занятий для выбранного типа занятия
+        lesson_check = []
         data = await get_data_lesson(call.data, data=lesson)
         # Отображаем доступные даты занятий
         markup = InlineKeyboardMarkup(row_width=1)
-        for types in data:
+        for lesson in data['lesson']:
+            if lesson.number_of_recorded >= lesson.max_number_of_recorded - 3:
+                formatted_date = f"{lesson.date.strftime('%d')} {MONTHS_RU[lesson.date.month]} {lesson.date.strftime('%Y')} г. {lesson.date.strftime('%H:%M')}"
+                lesson_check.append(formatted_date)
+        for types in data['date']:
             formatted_date = f"{types.strftime('%d')} {MONTHS_RU[types.month]} {types.strftime('%Y')} г. {types.strftime('%H:%M')}"
             markup.add(InlineKeyboardButton(text=str(formatted_date), callback_data=f"date_{types}"))
         markup.row(InlineKeyboardButton(text="Назад ⬅️", callback_data="back_to_month"))
+        if lesson_check:
+            await bot.edit_message_text(
+                f"<blockquote>️<i> Обратите внимание, что на занятие(я): \n<b>{', '.join(lesson_check)}\n"
+                f"осталось мало мест.</b> </i></blockquote>\nВыберите дату занятия:",
+                call.message.chat.id, call.message.message_id, reply_markup=markup)
+        elif not lesson_check:
+            await bot.edit_message_text(f"Выберите дату занятия:", call.message.chat.id, call.message.message_id,
+                                        reply_markup=markup)
 
-        # Отправляем сообщение с выбором даты занятия
-        await bot.edit_message_text(chat_id=call.message.chat.id,
-                                    text="<blockquote>️<i>Если кнопка не активна, то запись "
-                                         "на занятие закрыта.</i></blockquote>\n Выберите дату занятия:",
-                                    message_id=call.message.message_id, reply_markup=markup)
 
     async def choose_any(message, dates):
         # Получаем все даты занятий из базы данных
-
+        lesson_check = []
         markup = InlineKeyboardMarkup(row_width=1)
-        for date in dates:
+        for lesson in dates['lesson']:
+            if lesson.number_of_recorded >= lesson.max_number_of_recorded - 3:
+                formatted_date = f"{lesson.date.strftime('%d')} {MONTHS_RU[lesson.date.month]} {lesson.date.strftime('%Y')} г. {lesson.date.strftime('%H:%M')}"
+                lesson_check.append(formatted_date)
+        for date in dates['date']:
             formatted_date = f"{date.strftime('%d')} {MONTHS_RU[date.month]} {date.strftime('%Y')} г. {date.strftime('%H:%M')}"
             markup.add(InlineKeyboardButton(text=str(formatted_date), callback_data=f"date_{date}"))
         markup.row(InlineKeyboardButton(text="Назад ⬅️", callback_data="back_to_month"))
-
-        await bot.edit_message_text("Выберите дату занятия:", message.chat.id, message.message_id, reply_markup=markup)
+        if lesson_check:
+            await bot.edit_message_text(
+                f"<blockquote>️<i> Обратите внимание, что на занятие(я): \n<b>{', '.join(lesson_check)}\n"
+                f"осталось мало мест.</b> </i></blockquote>\nВыберите дату занятия:",
+                message.chat.id, message.message_id, reply_markup=markup)
+        elif not lesson_check:
+            await bot.edit_message_text(f"Выберите дату занятия:", message.chat.id, message.message_id,
+                                        reply_markup=markup)
 
     @bot.callback_query_handler(func=lambda call: call.data.startswith('date_'))
     async def handle_date(call):
@@ -185,19 +212,20 @@ async def send_calendar(message):
         if data['state'] and not date_relative:
             await set_data_user_lesson(call, date, relative_user=date_relative)
             if not data['tmp'][0].check_canceled:
-                # Обработка выбора пользователя по дате
-                formatted_date = (f"{data['tmp'][0].date.strftime('%d')} {MONTHS_RU[data['tmp'][0].date.month]} "
-                                  f"{data['tmp'][0].date.strftime('%Y')} г. {data['tmp'][0].date.strftime('%H:%M')}")
-                await bot.edit_message_text(chat_id=call.message.chat.id,
-                                            text=f"<b>Вы записаны к тренеру: {data['tmp'][0].trainer}\n"
-                                                 f"На занятие: {data['tmp'][0].lesson}\n"
-                                                 f" {formatted_date}</b>", message_id=call.message.message_id)
-                await bot.send_sticker(call.message.chat.id,
-                                       sticker='CAACAgIAAxkBAAELtpdl9WfB4snERAkVgZOph6nRzVHAYwACqQADFkJrCiSoJ_sldvhYNAQ')
-                with open(f'bot/logging/{call.message.chat.id}', 'a+', encoding='utf-8') as file:
-                    file.write(
-                        f"[INFO]-[{datetime.datetime.now()}]:Вы записаны к тренеру: "
-                        f"{data['tmp'][0].trainer} - На занятие: {data['tmp'][0].lesson} - {formatted_date}\n")
+                if data['tmp'][0].number_of_recorded < data['tmp'][0].max_number_of_recorded:
+                    # Обработка выбора пользователя по дате
+                    formatted_date = (f"{data['tmp'][0].date.strftime('%d')} {MONTHS_RU[data['tmp'][0].date.month]} "
+                                      f"{data['tmp'][0].date.strftime('%Y')} г. {data['tmp'][0].date.strftime('%H:%M')}")
+                    await bot.edit_message_text(chat_id=call.message.chat.id,
+                                                text=f"<b>Вы записаны к тренеру: {data['tmp'][0].trainer}\n"
+                                                     f"На занятие: {data['tmp'][0].lesson}\n"
+                                                     f" {formatted_date}</b>", message_id=call.message.message_id)
+                    await bot.send_sticker(call.message.chat.id,
+                                           sticker='CAACAgIAAxkBAAELtpdl9WfB4snERAkVgZOph6nRzVHAYwACqQADFkJrCiSoJ_sldvhYNAQ')
+                    with open(f'bot/logging/{call.message.chat.id}', 'a+', encoding='utf-8') as file:
+                        file.write(
+                            f"[INFO]-[{datetime.datetime.now()}]:Вы записаны к тренеру: "
+                            f"{data['tmp'][0].trainer} - На занятие: {data['tmp'][0].lesson} - {formatted_date}\n")
         elif data['state'] and date_relative and data['state_relative_user']:
             await set_data_user_lesson(call, date, relative_user=date_relative)
             # Обработка выбора пользователя по дате
@@ -222,6 +250,12 @@ async def send_calendar(message):
                                              "своего родственника, <b>если он является посетителем Нашего фитнес-клуба</b>.\n"
                                              "После его записи ему прейдет уведомление.</i></blockquote>️"
                                              "Ваш родственник уже записан на это занятие.",
+                                        message_id=call.message.message_id, reply_markup=keyboard_no_relative_user)
+        elif data['tmp'][0].number_of_recorded == data['tmp'][0].max_number_of_recorded:
+            await bot.edit_message_text(chat_id=call.message.chat.id,
+                                        text=f'<blockquote>️<i>⚠️Внимание: Пользовательское оповещение.\n'
+                                             f'Запись на текущее занятие закрыта.</i></blockquote>️\n'
+                                             f'<b>Приичина:</b> Достигнут лимит людей к занятию.',
                                         message_id=call.message.message_id, reply_markup=keyboard_no_relative_user)
 
     @bot.callback_query_handler(func=lambda call: call.data == "back_to_month")

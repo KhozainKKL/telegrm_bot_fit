@@ -18,16 +18,21 @@ def get_data_lesson(call, data=None, message=None, relative_user=None):
             result = list(TrainerFit.objects.all())
             return result
         elif call == "any":
+            result = {'date': list(
+                MainTableAdmin.objects.filter(date__gte=timezone.now()).values_list('date', flat=True)),
+                'lesson': list(MainTableAdmin.objects.filter(date__gte=timezone.now()))}
             # result = list(MainTableAdmin.objects.all().values_list('date', flat=True))
-            result = list(MainTableAdmin.objects.filter(date__gte=timezone.now()).values_list('date', flat=True))
+            print(result)
             return result
         elif call.startswith('type_') or call.startswith('trainers_lesson_'):
             result = list(
                 LessonFit.objects.filter(title=data).values_list('id', flat=True).all())
-            result_to = list(
+            result = {'date': list(
                 MainTableAdmin.objects.filter(lesson__in=result, date__gte=timezone.now()).values_list('date',
-                                                                                                       flat=True))
-            return result_to
+                                                                                                       flat=True)),
+                'lesson': list(MainTableAdmin.objects.filter(lesson__in=result, date__gte=timezone.now()))}
+            print(result)
+            return result
         elif call.startswith('schedule_type_'):
             result = list(
                 LessonFit.objects.filter(title=data))
@@ -131,4 +136,3 @@ def get_data_my_lesson(query=None, data=None):
             result['relative_user'] = list(MainTableAdmin.objects.filter(pk__in=relative_))
             print(result)
             return result
-

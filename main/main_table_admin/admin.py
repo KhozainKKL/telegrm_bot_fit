@@ -23,7 +23,7 @@ class TrainerFitModelAdmin(admin.ModelAdmin):
         (
             "Основная информация",
             {
-                "fields": ["date", "lesson", "trainer", "number_of_recorded"],
+                "fields": ["date", "lesson", "trainer", ("max_number_of_recorded", "number_of_recorded")],
             },
         ),
         (
