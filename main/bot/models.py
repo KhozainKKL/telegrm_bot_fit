@@ -1,5 +1,11 @@
 from django.db import models
 
+MONTHS_RU = {
+    1: 'Января', 2: 'Февраля', 3: 'Марта', 4: 'Апреля',
+    5: 'Мая', 6: 'Июня', 7: 'Июля', 8: 'Августа',
+    9: 'Сентября', 10: 'Октября', 11: 'Ноября', 12: 'Декабря',
+}
+
 
 class TelegramUser(models.Model):
     class Meta:
@@ -72,4 +78,6 @@ class DateLessonFit(models.Model):
     schedule = models.FileField(upload_to='bot/', verbose_name='Расписание')
 
     def __str__(self):
-        return f"{self.create_at}: {self.create_to}"
+        formatted_date_at = f"{self.create_at.strftime('%d')} {MONTHS_RU[self.create_at.month]} {self.create_at.strftime('%Y')} г."
+        formatted_date_to = f"{self.create_to.strftime('%d')} {MONTHS_RU[self.create_to.month]} {self.create_to.strftime('%Y')} г."
+        return f"{formatted_date_at} - {formatted_date_to}"

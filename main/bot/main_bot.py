@@ -4,11 +4,9 @@ import aiofiles
 from django.conf import settings
 from bot.models import TelegramUser
 from bot.example_text import helper
-from django.dispatch import receiver
 from asgiref.sync import sync_to_async
-from main_table_admin.models import MONTHS_RU, MainTableAdmin
+from main_table_admin.models import MONTHS_RU
 from telebot.async_telebot import AsyncTeleBot
-from django.db.models.signals import post_save, post_init
 from bot.middleware import AddNewUserMiddleware
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 from main.database.get_data_lesson import get_data_lesson, set_data_user_lesson, get_data_my_lesson
@@ -156,7 +154,6 @@ async def send_calendar(message):
         elif not lesson_check:
             await bot.edit_message_text(f"Выберите дату занятия:", call.message.chat.id, call.message.message_id,
                                         reply_markup=markup)
-
 
     async def choose_any(message, dates):
         # Получаем все даты занятий из базы данных

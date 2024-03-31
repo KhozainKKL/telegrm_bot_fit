@@ -2,7 +2,7 @@ import datetime
 import logging
 from asgiref.sync import sync_to_async
 from bot.models import LessonFit, TrainerFit, TelegramUser, UserFit, DateLessonFit
-from main_table_admin.models import UserFitLesson, MainTableAdmin, MONTHS_RU
+from main_table_admin.models import UserFitLesson, MainTableAdmin
 from django.utils import timezone
 
 logger = logging.getLogger(__name__)
