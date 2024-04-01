@@ -1,9 +1,8 @@
-from asgiref.sync import sync_to_async, async_to_sync
+from asgiref.sync import async_to_sync
 from django.contrib import admin
-
-from bot.main_bot import canceled_lesson_post_message_users
+from bot.main_bot import canceled_lesson_post_message_users, send_promo_users
 from bot.models import TelegramUser
-from .models import UserFitLesson
+from .models import UserFitLesson, HallPromo
 from main_table_admin.models import MainTableAdmin
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -76,3 +75,33 @@ def notify_users_on_cancel(sender, instance, created, **kwargs):
                 data.delete()
                 print(result)
                 async_to_sync(canceled_lesson_post_message_users)(result)
+
+
+@admin.register(HallPromo)
+class HallPromoModelAdmin(admin.ModelAdmin):
+    search_fields = ['title', 'description']
+    list_display = ['title', 'description', 'date_at', 'date_to', 'promo']
+    list_display_links = ["title", "description"]
+
+    fieldsets = [
+        (
+            "Основная информация",
+            {
+                "fields": ['title', 'description', 'date_at', 'date_to', 'promo', ],
+            },
+        ),
+    ]
+
+
+@receiver(signal=post_save, sender=HallPromo)
+def notify_users_on_cancel(sender, instance, created, **kwargs):
+    if created:
+        result = {'users': {}, 'instance': {}}
+        for user in TelegramUser.objects.all().values_list('telegram_user_id', flat=True):
+            result['users'][f'{user}'] = user
+        data = {'title': instance.title, 'description': instance.description, 'date_at': instance.date_at,
+                'date_to': instance.date_to,
+                'promo': instance.promo}
+        result['instance'] = data
+        print(result)
+        async_to_sync(send_promo_users)(result)

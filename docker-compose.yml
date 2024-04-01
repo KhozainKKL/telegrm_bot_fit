@@ -2,6 +2,7 @@ version: "3.1"
 
 services:
   grafana:
+    restart: always
     container_name: grafana
     image: "grafana/grafana:9.2.15"
     environment:
@@ -10,6 +11,7 @@ services:
     ports:
       - "3000:3000"
   loki:
+    restart: always
     container_name: loki
     image: "grafana/loki:2.8.0"
     ports:
@@ -17,6 +19,7 @@ services:
     depends_on:
     - grafana
   web_admin:
+    restart: always
     container_name: web_admin
     build: .
     command: >
@@ -35,14 +38,15 @@ services:
     - loki
   tgbot:
     container_name: bot
-    build:
-      context: .
+    build: .
     command: python3 manage.py run_bot
     restart: always
     networks:
       - botnet
     env_file:
       - ".env"
+    volumes:
+      - .:/main
     depends_on:
     - web_admin
     - redis
@@ -57,9 +61,11 @@ services:
     ports:
       - "6379:6379"
   celery:
+    restart: always
     container_name: celery
-    build:
-      context: .
+    volumes:
+      - .:/main
+    build: .
     env_file:
       - ".env"
     command: >
@@ -67,9 +73,11 @@ services:
     depends_on:
       - redis
   flower:
+    restart: always
     container_name: flower
-    build:
-      context: .
+    volumes:
+      - .:/main
+    build: .
     ports:
       - "5555:5555"
     command: >

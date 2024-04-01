@@ -49,3 +49,19 @@ class UserFitLesson(models.Model):
 
     def __str__(self):
         return f'{self.user}'
+
+
+class HallPromo(models.Model):
+    class Meta:
+        verbose_name = 'Акция фитнес-зала'
+        verbose_name_plural = 'Акции фитнес-зала'
+
+    title = models.CharField(max_length=50, verbose_name='Название')
+    description = models.CharField(max_length=255, verbose_name='Описание')
+    date_at = models.DateField(verbose_name='Начало кации')
+    date_to = models.DateField(verbose_name='Конец акции')
+    promo = models.CharField(max_length=5, verbose_name='Промокод')
+
+    def __str__(self):
+        return f'{self.title}'
+

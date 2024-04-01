@@ -416,6 +416,19 @@ async def canceled_lesson_post_message_users(data):
         await bot.send_message(chat_id=user, text=message_help)
 
 
+async def send_promo_users(result):
+    """ Отправка сообщения об акции в бот """
+    message_help = (
+        f'<blockquote>️<i>⚠️Внимание: Пользовательское оповещение.</i></blockquote>\n '
+        f'Только для Вас и только с {result["instance"]["date_at"]} по {result["instance"]["date_to"]}\n'
+        f'Акция: {result["instance"]["title"]}\n'
+        f'{result["instance"]["description"]}\n'
+        f'Используйте промокод: {result["instance"]["promo"]}'
+    )
+    for user in result['users']:
+        await bot.send_message(chat_id=user, text=message_help)
+
+
 @bot.message_handler(func=lambda message: True)
 @require_authentication
 async def echo_message(message):

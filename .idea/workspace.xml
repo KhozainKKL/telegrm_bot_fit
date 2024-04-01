@@ -5,8 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="adcea74b-aa53-4bda-be93-7a2577bc43ff" name="Changes" comment="fix bags">
+      <change afterPath="$PROJECT_DIR$/main/main/tasks.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/logging/1955038317" beforeDir="false" afterPath="$PROJECT_DIR$/main/bot/logging/1955038317" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/main_bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/bot/main_bot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/main/celery.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/main/celery.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/main/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/main/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/main_table_admin/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/main_table_admin/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/main_table_admin/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/main_table_admin/models.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,6 +60,9 @@
       <recent name="D:\Python\GitHub\telegrm_bot_fit\main\media\bot" />
       <recent name="D:\Python\GitHub\telegrm_bot_fit\main\bot\migrations" />
       <recent name="D:\Python\GitHub\telegrm_bot_fit\main\management" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\bog\PycharmProjects\telegrm_bot_fit\main\main" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -151,7 +161,15 @@
       <option name="project" value="LOCAL" />
       <updated>1711888740674</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="fix bags">
+      <option name="closed" value="true" />
+      <created>1711985605705</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1711985605705</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

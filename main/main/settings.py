@@ -32,7 +32,7 @@ DEBUG = env.bool('DEBUG')
 ALLOWED_HOSTS = ['*']
 TG_API_KEY = env.str('TG_API_KEY')
 INTERNAL_IPS = [
-    '127.0.0.1',  '0.0.0.0'
+    '127.0.0.1', '0.0.0.0'
 ]
 
 INSTALLED_APPS = [
@@ -164,9 +164,7 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
-
 IMPORT_EXPORT_FORMATS = [XLSX, XLS]
-
 
 REDIS_HOST = 'redis'
 REDIS_PORT = '6379'
@@ -179,6 +177,7 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Europe/Moscow'
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 CACHES = {
     'default': {
