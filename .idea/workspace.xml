@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="adcea74b-aa53-4bda-be93-7a2577bc43ff" name="Changes" comment="create docker">
+    <list default="true" id="adcea74b-aa53-4bda-be93-7a2577bc43ff" name="Changes" comment="fix bags">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -45,26 +44,21 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Python/GitHub/telegrm_bot_fit&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;Docker&quot;
+    &quot;last_opened_file_path&quot;: &quot;D:/Python/GitHub/telegrm_bot_fit/main/media/bot&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;
   }
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\Python\GitHub\telegrm_bot_fit" />
-      <recent name="D:\Python\GitHub\telegrm_bot_fit\main\media" />
-      <recent name="D:\Python\GitHub\telegrm_bot_fit\main\templates\admin" />
       <recent name="D:\Python\GitHub\telegrm_bot_fit\main\media\bot" />
       <recent name="D:\Python\GitHub\telegrm_bot_fit\main\bot\migrations" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\Python\GitHub\telegrm_bot_fit\main\static\admin\css" />
+      <recent name="D:\Python\GitHub\telegrm_bot_fit\main\management" />
     </key>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-d68999036c7f-d3b881c8e49f-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-233.14475.56" />
+        <option value="bundled-python-sdk-09665e90c3a7-d3b881c8e49f-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-233.15026.15" />
       </set>
     </attachedChunks>
   </component>
@@ -151,93 +145,13 @@
     </task>
     <task id="LOCAL-00010" summary="fix bags">
       <option name="closed" value="true" />
-      <created>1711432148133</created>
+      <created>1711888740674</created>
       <option name="number" value="00010" />
       <option name="presentableId" value="LOCAL-00010" />
       <option name="project" value="LOCAL" />
-      <updated>1711432148133</updated>
+      <updated>1711888740674</updated>
     </task>
-    <task id="LOCAL-00011" summary="change custom admin">
-      <option name="closed" value="true" />
-      <created>1711522737026</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1711522737026</updated>
-    </task>
-    <task id="LOCAL-00012" summary="change custom admin">
-      <option name="closed" value="true" />
-      <created>1711533525360</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1711533525360</updated>
-    </task>
-    <task id="LOCAL-00013" summary="change custom admin">
-      <option name="closed" value="true" />
-      <created>1711533679757</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1711533679757</updated>
-    </task>
-    <task id="LOCAL-00014" summary="fix bags">
-      <option name="closed" value="true" />
-      <created>1711534613598</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1711534613598</updated>
-    </task>
-    <task id="LOCAL-00015" summary="fix bags">
-      <option name="closed" value="true" />
-      <created>1711534797143</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1711534797143</updated>
-    </task>
-    <task id="LOCAL-00016" summary="fix bags">
-      <option name="closed" value="true" />
-      <created>1711534866866</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1711534866866</updated>
-    </task>
-    <task id="LOCAL-00017" summary="create canceled lesson and post message users">
-      <option name="closed" value="true" />
-      <created>1711615108258</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1711615108258</updated>
-    </task>
-    <task id="LOCAL-00018" summary="create canceled lesson and post message users">
-      <option name="closed" value="true" />
-      <created>1711629362644</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1711629362644</updated>
-    </task>
-    <task id="LOCAL-00019" summary="create docker">
-      <option name="closed" value="true" />
-      <created>1711969040076</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1711969040076</updated>
-    </task>
-    <task id="LOCAL-00020" summary="create docker">
-      <option name="closed" value="true" />
-      <created>1711969071146</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1711969071146</updated>
-    </task>
-    <option name="localTasksCounter" value="21" />
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -254,10 +168,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="create commands run_bot.py&#10;initial django-grappelli" />
     <MESSAGE value="create middleware.py registration users" />
-    <MESSAGE value="change custom admin" />
     <MESSAGE value="fix bags" />
-    <MESSAGE value="create canceled lesson and post message users" />
-    <MESSAGE value="create docker" />
-    <option name="LAST_COMMIT_MESSAGE" value="create docker" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix bags" />
   </component>
 </project>

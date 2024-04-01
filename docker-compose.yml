@@ -43,8 +43,6 @@ services:
       - botnet
     env_file:
       - ".env"
-    volumes:
-      - .:/main
     depends_on:
     - web_admin
     - redis
