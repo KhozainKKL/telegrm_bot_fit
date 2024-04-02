@@ -17,7 +17,7 @@ class TrainerFitModelAdmin(admin.ModelAdmin):
     readonly_fields = ('number_of_recorded',)
     list_display_links = ['date', 'lesson', 'trainer', ]
     # radio_fields = {'trainer': admin.HORIZONTAL}
-    autocomplete_fields = ["lesson"]
+    # autocomplete_fields = ["lesson"]
     fieldsets = [
         (
             "Основная информация",
