@@ -8,7 +8,18 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/bot/logging/401182313" beforeDir="false" afterPath="$PROJECT_DIR$/main/bot/logging/401182313" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/bot/main_bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/bot/main_bot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/migrations/0002_delete_userfitlesson.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/migrations/0003_delete_timelessonfit.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/migrations/0004_alter_userfit_phone.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/bot/migrations/0005_userfit_relative_user.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main/main_table_admin/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/main_table_admin/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/main_table_admin/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/main_table_admin/migrations/0002_userfitlesson.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/main_table_admin/migrations/0003_remove_userfitlesson_date_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/main_table_admin/migrations/0004_maintableadmin_max_number_of_recorded.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/main_table_admin/migrations/0005_hallpromo.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/main_table_admin/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/main_table_admin/models.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,14 +52,7 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
-    &quot;Python.CheckButton.executor&quot;: &quot;Run&quot;,
-    &quot;Python.ComboBox.executor&quot;: &quot;Run&quot;,
-    &quot;Python.PasswordGenerator.executor&quot;: &quot;Run&quot;,
-    &quot;Python.calculated.executor&quot;: &quot;Run&quot;,
-    &quot;Python.game.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
     &quot;Python.main_bot.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.password.executor&quot;: &quot;Run&quot;,
     &quot;Python.settings.executor&quot;: &quot;Debug&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,

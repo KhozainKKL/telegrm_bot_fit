@@ -421,15 +421,20 @@ async def canceled_lesson_post_message_users(data):
 
 async def send_promo_users(result):
     """ Отправка сообщения об акции в бот """
+    formatted_date_at = (f"{result['instance']['date_at'].strftime('%d')} "
+                         f"{MONTHS_RU[result['instance']['date_at'].month]} {result['instance']['date_at'].strftime('%Y')} г.")
+    formatted_date_to = (f"{result['instance']['date_to'].strftime('%d')} "
+                         f"{MONTHS_RU[result['instance']['date_to'].month]} {result['instance']['date_to'].strftime('%Y')} г.")
+
     message_help = (
-        f'<blockquote>️<i>⚠️Внимание: Пользовательское оповещение.</i></blockquote>\n '
-        f'Только для Вас и только с {result["instance"]["date_at"]} по {result["instance"]["date_to"]}\n'
-        f'Акция: {result["instance"]["title"]}\n'
-        f'{result["instance"]["description"]}\n'
-        f'Используйте промокод: {result["instance"]["promo"]}'
+        f'<blockquote>️<i>⚠️Просим обратить Ваше внимание!</i>\n '
+        f'Только <b>с {formatted_date_at} по {formatted_date_to}</b>\n</blockquote>'
+        f'<b>Акция: {result["instance"]["title"]}</b>\n'
+        f'<blockquote>{result["instance"]["description"]}</blockquote>\n'
+        f'<tg-spoiler><b>Используйте промокод:</b> {result["instance"]["promo"]}</tg-spoiler>'
     )
     for user in result['users']:
-        await bot.send_message(chat_id=user, text=message_help)
+        await bot.send_photo(chat_id=user, photo=open(result["instance"]["image"], "rb"), caption=message_help)
 
 
 @bot.message_handler(func=lambda message: True)

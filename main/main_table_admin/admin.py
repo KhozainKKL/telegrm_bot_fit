@@ -1,15 +1,40 @@
 from asgiref.sync import async_to_sync
+from django import forms
 from django.contrib import admin
 from bot.main_bot import canceled_lesson_post_message_users, send_promo_users
 from bot.models import TelegramUser
+from .forms import UserFitInLinesForm
 from .models import UserFitLesson, HallPromo
 from main_table_admin.models import MainTableAdmin
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 
+# @admin.register(UserFitLesson)
+# class UserFitModelAdmin(admin.ModelAdmin):
+#     search_fields = ['user', 'lesson']
+#     list_display = ['user', 'lesson']
+#     list_filter = ('lesson', 'user')
+#     list_display_links = ["user", "lesson"]
+#
+#     fieldsets = [
+#         (
+#             "Основная информация",
+#             {
+#                 "fields": ["user", "lesson", ],
+#             },
+#         ),
+#     ]
+
+
+class UserFitInLines(admin.TabularInline):
+    model = UserFitLesson
+    form = UserFitInLinesForm
+
+
 @admin.register(MainTableAdmin)
-class TrainerFitModelAdmin(admin.ModelAdmin):
+class MainTableModelAdmin(admin.ModelAdmin):
+    inlines = [UserFitInLines]
     search_fields = ['date', 'lesson', 'week_schedule']
     list_display = ['date', 'lesson', 'trainer', 'number_of_recorded', 'check_canceled',
                     'check_canceled_description']
@@ -35,18 +60,17 @@ class TrainerFitModelAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(UserFitLesson)
-class TrainerFitModelAdmin(admin.ModelAdmin):
-    search_fields = ['user', 'lesson']
-    list_display = ['user', 'lesson']
-    list_filter = ('lesson', 'user')
-    list_display_links = ["user", "lesson"]
+@admin.register(HallPromo)
+class HallPromoModelAdmin(admin.ModelAdmin):
+    search_fields = ['title', 'description']
+    list_display = ['title', 'description', 'date_at', 'date_to', 'promo']
+    list_display_links = ["title", "description"]
 
     fieldsets = [
         (
             "Основная информация",
             {
-                "fields": ["user", "lesson", ],
+                "fields": ['title', 'description', 'date_at', 'date_to', 'promo', 'image'],
             },
         ),
     ]
@@ -78,22 +102,6 @@ def notify_users_on_cancel(sender, instance, created, **kwargs):
                     async_to_sync(canceled_lesson_post_message_users)(result)
 
 
-@admin.register(HallPromo)
-class HallPromoModelAdmin(admin.ModelAdmin):
-    search_fields = ['title', 'description']
-    list_display = ['title', 'description', 'date_at', 'date_to', 'promo']
-    list_display_links = ["title", "description"]
-
-    fieldsets = [
-        (
-            "Основная информация",
-            {
-                "fields": ['title', 'description', 'date_at', 'date_to', 'promo', ],
-            },
-        ),
-    ]
-
-
 @receiver(signal=post_save, sender=HallPromo)
 def notify_users_on_cancel(sender, instance, created, **kwargs):
     if created:
@@ -102,7 +110,7 @@ def notify_users_on_cancel(sender, instance, created, **kwargs):
             result['users'][f'{user}'] = user
         data = {'title': instance.title, 'description': instance.description, 'date_at': instance.date_at,
                 'date_to': instance.date_to,
-                'promo': instance.promo}
+                'promo': instance.promo, 'image': instance.image.path}
         result['instance'] = data
         print(result)
         async_to_sync(send_promo_users)(result)
