@@ -30,7 +30,7 @@ from django.dispatch import receiver
 class UserFitInLines(admin.TabularInline):
     model = UserFitLesson
     form = UserFitInLinesForm
-
+    autocomplete_fields = ["user"]
 
 @admin.register(MainTableAdmin)
 class MainTableModelAdmin(admin.ModelAdmin):
@@ -42,7 +42,7 @@ class MainTableModelAdmin(admin.ModelAdmin):
     readonly_fields = ('number_of_recorded',)
     list_display_links = ['date', 'lesson', 'trainer', ]
     # radio_fields = {'trainer': admin.HORIZONTAL}
-    # autocomplete_fields = ["lesson"]
+    autocomplete_fields = ["lesson", "trainer"]
     fieldsets = [
         (
             "Основная информация",
