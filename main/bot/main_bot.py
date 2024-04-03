@@ -406,10 +406,13 @@ async def my_lesson(message):
 
 
 async def canceled_lesson_post_message_users(data):
+    formatted_date = (f"{data['lesson'][0].date.strftime('%d')} "
+                      f"{MONTHS_RU[data['lesson'][0].date.month]} {data['lesson'][0].date.strftime('%Y')} г. "
+                      f"{data['lesson'][0].date.strftime('%H:%M')}")
     message_help = (
         f'<blockquote>️<i>⚠️Внимание: Пользовательское оповещение.\n '
         f'<b>Занятие:</b> {data["lesson_title"][0]}\n'
-        f'<b>Время:</b> {data["lesson"][0].date}\n'
+        f'<b>Время:</b> {formatted_date}\n'
         f' <b>ОТМЕНЕНО!😔</b></i></blockquote>️\n'
         f' <b>Причина:</b> {data["lesson"][0].check_canceled_description}')
     for user in data['tg_users']:

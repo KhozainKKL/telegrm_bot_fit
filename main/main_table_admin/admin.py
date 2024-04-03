@@ -63,18 +63,19 @@ def notify_users_on_cancel(sender, instance, created, **kwargs):
             result['lesson_title'] = list(
                 MainTableAdmin.objects.filter(pk__in=data).values_list('lesson__title', flat=True))
             tg_users = TelegramUser.objects.filter(card__in=users).values_list('telegram_user_id', flat=True)
-            tmp = MainTableAdmin.objects.filter(pk__in=data).first()
-            for tg_user in tg_users:
-                result['tg_users'][f'{tg_user}'] = tg_user
-            print(len(tg_users))
-            if tmp.number_of_recorded != 0:
-                tmp.number_of_recorded -= len(tg_users)
-                tmp.save()
-            elif tmp.number_of_recorded == 0:
-                data = UserFitLesson.objects.filter(lesson__in=data)
-                data.delete()
-                print(result)
-                async_to_sync(canceled_lesson_post_message_users)(result)
+            if tg_users:
+                tmp = MainTableAdmin.objects.filter(pk__in=data).first()
+                for tg_user in tg_users:
+                    result['tg_users'][f'{tg_user}'] = tg_user
+                print(len(tg_users))
+                if tmp.number_of_recorded != 0:
+                    tmp.number_of_recorded -= len(tg_users)
+                    tmp.save()
+                elif tmp.number_of_recorded == 0:
+                    data = UserFitLesson.objects.filter(lesson__in=data)
+                    data.delete()
+                    print(result)
+                    async_to_sync(canceled_lesson_post_message_users)(result)
 
 
 @admin.register(HallPromo)
