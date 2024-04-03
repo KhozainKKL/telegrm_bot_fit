@@ -32,6 +32,7 @@ class UserFitInLines(admin.TabularInline):
     form = UserFitInLinesForm
     autocomplete_fields = ["user"]
 
+
 @admin.register(MainTableAdmin)
 class MainTableModelAdmin(admin.ModelAdmin):
     inlines = [UserFitInLines]
@@ -58,6 +59,18 @@ class MainTableModelAdmin(admin.ModelAdmin):
             },
         ),
     ]
+
+    def save_formset(self, request, form, formset, change):
+        instances = formset.save(commit=False)
+        for instance in instances:
+            if not instance.pk:
+                instance.lesson.number_of_recorded += 1
+                instance.lesson.save()
+        super().save_formset(request, form, formset, change)
+
+        for deleted_object in formset.deleted_objects:
+            deleted_object.lesson.number_of_recorded -= 1
+            deleted_object.lesson.save()
 
 
 @admin.register(HallPromo)
