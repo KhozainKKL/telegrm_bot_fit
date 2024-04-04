@@ -185,7 +185,8 @@ async def send_calendar(message):
             date_relative = None
 
         data = await get_data_lesson(call.data, data=date, message=call.message.chat.id, relative_user=date_relative)
-        if not data['state'] and data['relative_user']:
+        if not data['state'] and data['relative_user'] and data['tmp'][0].number_of_recorded < data['tmp'][
+            0].max_number_of_recorded:
             keyboard_relative_user = InlineKeyboardMarkup(row_width=1)
             keyboard_relative_user.add(
                 InlineKeyboardButton(text=f'{data["relative_user"].first_name} {data["relative_user"].last_name}',
@@ -197,7 +198,8 @@ async def send_calendar(message):
                                              "После его записи ему прейдет уведомление.</i></blockquote>️"
                                              "Ваш родственник:",
                                         message_id=call.message.message_id, reply_markup=keyboard_relative_user)
-        elif not data['state'] and not data['relative_user']:
+        elif not data['state'] and not data['relative_user'] and data['tmp'][0].number_of_recorded < data['tmp'][
+            0].max_number_of_recorded:
             keyboard_no_relative_user = InlineKeyboardMarkup(row_width=1)
             keyboard_no_relative_user.row(InlineKeyboardButton(text="Назад ⬅️", callback_data="back_to_month"))
             await bot.edit_message_text(chat_id=call.message.chat.id,
@@ -206,7 +208,8 @@ async def send_calendar(message):
                                              "После его записи ему прейдет уведомление.</i></blockquote>️"
                                              "У Вас нет родственников посещающих Наш фитнес-клуб.",
                                         message_id=call.message.message_id, reply_markup=keyboard_no_relative_user)
-        if data['state'] and not date_relative:
+        if data['state'] and not date_relative and data['tmp'][0].number_of_recorded < data['tmp'][
+            0].max_number_of_recorded:
             await set_data_user_lesson(call, date, relative_user=date_relative)
             if not data['tmp'][0].check_canceled:
                 if data['tmp'][0].number_of_recorded < data['tmp'][0].max_number_of_recorded:
@@ -223,7 +226,8 @@ async def send_calendar(message):
                         file.write(
                             f"[INFO]-[{datetime.datetime.now()}]:Вы записаны к тренеру: "
                             f"{data['tmp'][0].trainer} - На занятие: {data['tmp'][0].lesson} - {formatted_date}\n")
-        elif data['state'] and date_relative and data['state_relative_user']:
+        elif data['state'] and date_relative and data['state_relative_user'] and data['tmp'][0].number_of_recorded < \
+                data['tmp'][0].max_number_of_recorded:
             await set_data_user_lesson(call, date, relative_user=date_relative)
             # Обработка выбора пользователя по дате
             formatted_date = (f"{data['tmp'][0].date.strftime('%d')} {MONTHS_RU[data['tmp'][0].date.month]} "
@@ -248,11 +252,27 @@ async def send_calendar(message):
                                              "После его записи ему прейдет уведомление.</i></blockquote>️"
                                              "Ваш родственник уже записан на это занятие.",
                                         message_id=call.message.message_id, reply_markup=keyboard_no_relative_user)
-        elif data['tmp'][0].number_of_recorded == data['tmp'][0].max_number_of_recorded:
+        elif data['state'] and not date_relative and data['tmp'][0].number_of_recorded >= data['tmp'][
+            0].max_number_of_recorded:
+            keyboard_no_relative_user = InlineKeyboardMarkup(row_width=1)
+            keyboard_no_relative_user.row(InlineKeyboardButton(text="Назад ⬅️", callback_data="back_to_month"))
+            await set_data_user_lesson(call, date, relative_user=date_relative, is_reserve=True)
             await bot.edit_message_text(chat_id=call.message.chat.id,
                                         text=f'<blockquote>️<i>⚠️Внимание: Пользовательское оповещение.\n'
-                                             f'Запись на текущее занятие закрыта.</i></blockquote>️\n'
-                                             f'<b>Приичина:</b> Достигнут лимит людей к занятию.',
+                                             f'Слишком много людей хотят попсать на это занятие, но мы Вами дорожим, поэтому:️\n'
+                                             f'Вы записаны в <b>РЕЗЕРВ</b></i></blockquote>\n'
+                                             f'<i>*Если кто-то передумает идти на занятие, то мы Вам сообщим об этом.</i>',
+                                        message_id=call.message.message_id, reply_markup=keyboard_no_relative_user)
+        elif data['state'] and date_relative and data['state_relative_user'] and data['tmp'][0].number_of_recorded >= \
+                data['tmp'][0].max_number_of_recorded:
+            keyboard_no_relative_user = InlineKeyboardMarkup(row_width=1)
+            keyboard_no_relative_user.row(InlineKeyboardButton(text="Назад ⬅️", callback_data="back_to_month"))
+            await set_data_user_lesson(call, date, relative_user=date_relative, is_reserve=True)
+            await bot.edit_message_text(chat_id=call.message.chat.id,
+                                        text=f'<blockquote>️<i>⚠️Внимание: Пользовательское оповещение.\n'
+                                             f'Слишком много людей хотят попсать на это занятие, но мы Вами дорожим, поэтому:️\n'
+                                             f'Ваш родственник записан в <b>РЕЗЕРВ</b></i></blockquote>\n'
+                                             f'<i>*Если кто-то передумает идти на занятие, то мы Вам или ему сообщим об этом.</i>',
                                         message_id=call.message.message_id, reply_markup=keyboard_no_relative_user)
 
     @bot.callback_query_handler(func=lambda call: call.data == "back_to_month")
@@ -415,6 +435,19 @@ async def canceled_lesson_post_message_users(data):
         f'<b>Время:</b> {formatted_date}\n'
         f' <b>ОТМЕНЕНО!😔</b></i></blockquote>️\n'
         f' <b>Причина:</b> {data["lesson"][0].check_canceled_description}')
+    for user in data['tg_users']:
+        await bot.send_message(chat_id=user, text=message_help)
+
+
+async def get_for_user_is_not_reserve(data):
+    formatted_date = (f"{data['lesson'][0].date.strftime('%d')} "
+                      f"{MONTHS_RU[data['lesson'][0].date.month]} {data['lesson'][0].date.strftime('%Y')} г. "
+                      f"{data['lesson'][0].date.strftime('%H:%M')}")
+    message_help = (
+        f'<blockquote>️<i>⚠️Внимание: Пользовательское оповещение. </i></blockquote>️\n '
+        f'Вы перенесены с резерва. Можете приходить на:\n'
+        f'<b>Занятие:</b> {data["lesson_title"][0]}\n'
+        f'<b>Время:</b> {formatted_date}\n')
     for user in data['tg_users']:
         await bot.send_message(chat_id=user, text=message_help)
 

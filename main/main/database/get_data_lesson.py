@@ -44,7 +44,8 @@ def get_data_lesson(call, data=None, message=None, relative_user=None):
                 MainTableAdmin.objects.filter(trainer__in=result).values_list('lesson__title', flat=True).distinct())
             return result_to
         elif call.startswith('date_'):
-            result = {'state': True, 'tmp': None, 'relative_user': None, 'state_relative_user': True}
+            result = {'state': True, 'tmp': None, 'relative_user': None, 'state_relative_user': True,
+                      'is_reserve': False}
             if not relative_user:
                 get_card = TelegramUser.objects.get(telegram_user_id=message).card
                 get_user = UserFitLesson.objects.filter(user=get_card).values_list('lesson__lesson', flat=True)
@@ -53,6 +54,8 @@ def get_data_lesson(call, data=None, message=None, relative_user=None):
                 if get_user_lesson == result['tmp']:
                     result['state'] = False
                     result['relative_user'] = get_card.relative_user
+                if result['tmp'][0].number_of_recorded >= result['tmp'][0].max_number_of_recorded:
+                    result['is_reserve'] = True
                 print(result)
                 return result
             else:
@@ -63,6 +66,8 @@ def get_data_lesson(call, data=None, message=None, relative_user=None):
                 if get_user_lesson == result['tmp']:
                     result['state_relative_user'] = False
                     result['relative_user'] = None
+                if data['tmp'].number_of_recorded >= data['tmp'].max_number_of_recorded:
+                    result['is_reserve'] = True
                 elif get_user_lesson != result['tmp']:
                     result['relative_user'] = get_card
                 print(result)
@@ -70,38 +75,55 @@ def get_data_lesson(call, data=None, message=None, relative_user=None):
 
 
     except Exception:
-        if call.text == 'Расписание и описание групповых занятий 🧘‍♂️':
-            result = []
-
-            today = datetime.date.today()
-            start_of_week = today - datetime.timedelta(days=today.weekday())
-            end_of_week = start_of_week + datetime.timedelta(days=6)
-            next_week_start = end_of_week + datetime.timedelta(days=1)
-            next_week_end = next_week_start + datetime.timedelta(days=6)
-            week_range_str = [start_of_week.strftime('%d.%m') + '-' + end_of_week.strftime('%d.%m'),
-                              next_week_start.strftime('%d.%m') + '-' + next_week_end.strftime('%d.%m')]
-            for week in week_range_str:
-                file = list(DateLessonFit.objects.filter(schedule__contains=week))
-                result.append(file)
-            return result
+        # if call.text == 'Расписание и описание групповых занятий 🧘‍♂️':
+        #     result = []
+        #
+        #     today = datetime.date.today()
+        #     start_of_week = today - datetime.timedelta(days=today.weekday())
+        #     end_of_week = start_of_week + datetime.timedelta(days=6)
+        #     next_week_start = end_of_week + datetime.timedelta(days=1)
+        #     next_week_end = next_week_start + datetime.timedelta(days=6)
+        #     week_range_str = [start_of_week.strftime('%d.%m') + '-' + end_of_week.strftime('%d.%m'),
+        #                       next_week_start.strftime('%d.%m') + '-' + next_week_end.strftime('%d.%m')]
+        #     for week in week_range_str:
+        #         file = list(DateLessonFit.objects.filter(schedule__contains=week))
+        #         result.append(file)
+        #     return result
+        pass
 
 
 @sync_to_async
-def set_data_user_lesson(message, data, relative_user=None):
-    if not relative_user:
-        tmp = MainTableAdmin.objects.filter(date=data).first()
-        user_tg = TelegramUser.objects.filter(telegram_user_id=message.from_user.id).values_list('id',
-                                                                                                 flat=True).first()
-        user_fit = UserFit.objects.get(id=user_tg)
-        result, created = UserFitLesson.objects.get_or_create(user=user_fit, lesson=tmp)
-        tmp.number_of_recorded += 1
-        tmp.save()
-    elif relative_user:
-        tmp = MainTableAdmin.objects.filter(date=data).first()
-        user_fit = UserFit.objects.get(id=relative_user)
-        result, created = UserFitLesson.objects.get_or_create(user=user_fit, lesson=tmp)
-        tmp.number_of_recorded += 1
-        tmp.save()
+def set_data_user_lesson(message, data, relative_user=None, is_reserve=False):
+    if not is_reserve:
+        if not relative_user:
+            tmp = MainTableAdmin.objects.filter(date=data).first()
+            user_tg = TelegramUser.objects.filter(telegram_user_id=message.from_user.id).values_list('id',
+                                                                                                     flat=True).first()
+            user_fit = UserFit.objects.get(id=user_tg)
+            result, created = UserFitLesson.objects.get_or_create(user=user_fit, lesson=tmp)
+            tmp.number_of_recorded += 1
+            tmp.save()
+        elif relative_user:
+            tmp = MainTableAdmin.objects.filter(date=data).first()
+            user_fit = UserFit.objects.get(id=relative_user)
+            result, created = UserFitLesson.objects.get_or_create(user=user_fit, lesson=tmp)
+            tmp.number_of_recorded += 1
+            tmp.save()
+    else:
+        if not relative_user:
+            tmp = MainTableAdmin.objects.filter(date=data).first()
+            user_tg = TelegramUser.objects.filter(telegram_user_id=message.from_user.id).values_list('id',
+                                                                                                     flat=True).first()
+            user_fit = UserFit.objects.get(id=user_tg)
+            result, created = UserFitLesson.objects.get_or_create(user=user_fit, lesson=tmp, is_reserve=is_reserve)
+            tmp.number_of_recorded += 1
+            tmp.save()
+        elif relative_user:
+            tmp = MainTableAdmin.objects.filter(date=data).first()
+            user_fit = UserFit.objects.get(id=relative_user)
+            result, created = UserFitLesson.objects.get_or_create(user=user_fit, lesson=tmp, is_reserve=is_reserve)
+            tmp.number_of_recorded += 1
+            tmp.save()
 
 
 @sync_to_async
@@ -118,6 +140,11 @@ def get_data_my_lesson(query=None, data=None):
                 tmp.save()
                 data = UserFitLesson.objects.filter(lesson=data)
                 data[0].delete()
+                if tmp.number_of_recorded > tmp.max_number_of_recorded:
+                    first_reserve_user_fit_lesson = UserFitLesson.objects.filter(is_reserve=True).order_by('pk').first()
+                    first_reserve_user_fit_lesson.is_reserve = False
+                    first_reserve_user_fit_lesson.save()
+
     except Exception:
         if query.text == 'Занятия на которые Вы записаны📆':
             result = {'user': None, 'relative_user': None}

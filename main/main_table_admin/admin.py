@@ -2,8 +2,8 @@ from asgiref.sync import async_to_sync
 from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from bot.main_bot import canceled_lesson_post_message_users
-from bot.models import TelegramUser
+from bot.main_bot import canceled_lesson_post_message_users, get_for_user_is_not_reserve
+from bot.models import TelegramUser, UserFit
 from main.tasks import publish_object
 from .forms import UserFitInLinesForm
 from .models import UserFitLesson, HallPromo
@@ -16,6 +16,7 @@ class UserFitInLines(admin.TabularInline):
     model = UserFitLesson
     form = UserFitInLinesForm
     autocomplete_fields = ["user"]
+    # readonly_fields = ('is_reserve',)
 
 
 @admin.register(MainTableAdmin)
@@ -107,3 +108,22 @@ def notify_users_on_cancel(sender, instance, created, **kwargs):
                     data.delete()
                     print(result)
                     async_to_sync(canceled_lesson_post_message_users)(result)
+
+
+@receiver(signal=post_save, sender=UserFitLesson, dispatch_uid="unique_id_for_notify_users_on_cancel")
+def check_user_is_not_reserve(sender, instance, created, **kwargs):
+    print(f'UserFitInLines-instance {instance.user.card}')
+    print(f'UserFitInLines-created {created}')
+    result = {'lesson': None, 'lesson_title': None, 'tg_users': {}}
+    if not created and not instance.is_reserve:
+        user = UserFit.objects.filter(card=instance.user.card).values_list('pk', flat=True)
+        tg_user = TelegramUser.objects.filter(card__in=user).values_list('telegram_user_id', flat=True).first()
+        data = UserFitLesson.objects.filter(lesson=instance.lesson).values_list('lesson', flat=True)
+        if data:
+            result['lesson'] = list(MainTableAdmin.objects.filter(pk__in=data))
+            result['lesson_title'] = list(
+                MainTableAdmin.objects.filter(pk__in=data).values_list('lesson__title', flat=True))
+            if tg_user:
+                result['tg_users'][f'{tg_user}'] = tg_user
+                print(result)
+                async_to_sync(get_for_user_is_not_reserve)(result)

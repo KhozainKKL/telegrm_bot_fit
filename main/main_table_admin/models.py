@@ -46,6 +46,7 @@ class UserFitLesson(models.Model):
 
     user = models.ForeignKey(UserFit, on_delete=models.CASCADE, verbose_name='Клиент')
     lesson = models.ForeignKey(MainTableAdmin, on_delete=models.CASCADE, verbose_name='Занятие')
+    is_reserve = models.BooleanField(default=False, verbose_name='Резервный клиент')
 
     def __str__(self):
         return f'{self.user}'
