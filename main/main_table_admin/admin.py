@@ -12,23 +12,6 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 
-# @admin.register(UserFitLesson)
-# class UserFitModelAdmin(admin.ModelAdmin):
-#     search_fields = ['user', 'lesson']
-#     list_display = ['user', 'lesson']
-#     list_filter = ('lesson', 'user')
-#     list_display_links = ["user", "lesson"]
-#
-#     fieldsets = [
-#         (
-#             "Основная информация",
-#             {
-#                 "fields": ["user", "lesson", ],
-#             },
-#         ),
-#     ]
-
-
 class UserFitInLines(admin.TabularInline):
     model = UserFitLesson
     form = UserFitInLinesForm
@@ -124,16 +107,3 @@ def notify_users_on_cancel(sender, instance, created, **kwargs):
                     data.delete()
                     print(result)
                     async_to_sync(canceled_lesson_post_message_users)(result)
-
-# @receiver(signal=post_save, sender=HallPromo)
-# def notify_users_on_promo(sender, instance, created, **kwargs):
-#     if created:
-#         result = {'users': {}, 'instance': {}}
-#         for user in TelegramUser.objects.all().values_list('telegram_user_id', flat=True):
-#             result['users'][f'{user}'] = user
-#         data = {'title': instance.title, 'description': instance.description, 'date_at': instance.date_at,
-#                 'date_to': instance.date_to,
-#                 'promo': instance.promo, 'image': instance.image.path}
-#         result['instance'] = data
-#         print(result)
-#         # async_to_sync(send_promo_users)(result)
