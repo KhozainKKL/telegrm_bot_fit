@@ -1,0 +1,7 @@
+{% extends "admin/change_form.html" %}
+
+{% block submit_buttons_bottom %}<input value="Опубликовать акцию 🔴" id="publish_button"
+                                        style="background-color:#21b974;" type="submit" name="_publish"
+                                        onclick="publishObject('{{ obj.pk }}')"/>
+{{ block.super }}
+{% endblock %}

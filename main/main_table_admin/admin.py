@@ -1,8 +1,10 @@
 from asgiref.sync import async_to_sync
-from django import forms
-from django.contrib import admin
-from bot.main_bot import canceled_lesson_post_message_users, send_promo_users
+from django.contrib import admin, messages
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from bot.main_bot import canceled_lesson_post_message_users
 from bot.models import TelegramUser
+from main.tasks import publish_object
 from .forms import UserFitInLinesForm
 from .models import UserFitLesson, HallPromo
 from main_table_admin.models import MainTableAdmin
@@ -78,7 +80,6 @@ class HallPromoModelAdmin(admin.ModelAdmin):
     search_fields = ['title', 'description']
     list_display = ['title', 'description', 'date_at', 'date_to', 'promo']
     list_display_links = ["title", "description"]
-
     fieldsets = [
         (
             "Основная информация",
@@ -87,6 +88,16 @@ class HallPromoModelAdmin(admin.ModelAdmin):
             },
         ),
     ]
+
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        if request.method == 'POST' and '_publish' in request.POST:
+            publish_object.delay(request.POST, object_id)
+            messages.add_message(request, messages.INFO,
+                                 f'Акционная рассылка "{request.POST["title"]}" успешно отправлена пользователям.')
+            return HttpResponseRedirect(reverse('admin:main_table_admin_hallpromo_changelist'))
+        else:
+            self.change_form_template = 'admin/main_table_admin/hallpromo_change_form.html'
+            return super().change_view(request, object_id, form_url, extra_context)
 
 
 @receiver(signal=post_save, sender=MainTableAdmin, dispatch_uid="unique_id_for_notify_users_on_cancel")
@@ -114,16 +125,15 @@ def notify_users_on_cancel(sender, instance, created, **kwargs):
                     print(result)
                     async_to_sync(canceled_lesson_post_message_users)(result)
 
-
-@receiver(signal=post_save, sender=HallPromo)
-def notify_users_on_cancel(sender, instance, created, **kwargs):
-    if created:
-        result = {'users': {}, 'instance': {}}
-        for user in TelegramUser.objects.all().values_list('telegram_user_id', flat=True):
-            result['users'][f'{user}'] = user
-        data = {'title': instance.title, 'description': instance.description, 'date_at': instance.date_at,
-                'date_to': instance.date_to,
-                'promo': instance.promo, 'image': instance.image.path}
-        result['instance'] = data
-        print(result)
-        async_to_sync(send_promo_users)(result)
+# @receiver(signal=post_save, sender=HallPromo)
+# def notify_users_on_promo(sender, instance, created, **kwargs):
+#     if created:
+#         result = {'users': {}, 'instance': {}}
+#         for user in TelegramUser.objects.all().values_list('telegram_user_id', flat=True):
+#             result['users'][f'{user}'] = user
+#         data = {'title': instance.title, 'description': instance.description, 'date_at': instance.date_at,
+#                 'date_to': instance.date_to,
+#                 'promo': instance.promo, 'image': instance.image.path}
+#         result['instance'] = data
+#         print(result)
+#         # async_to_sync(send_promo_users)(result)
