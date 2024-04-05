@@ -185,8 +185,8 @@ async def send_calendar(message):
             date_relative = None
 
         data = await get_data_lesson(call.data, data=date, message=call.message.chat.id, relative_user=date_relative)
-        if not data['state'] and data['relative_user'] and data['tmp'][0].number_of_recorded < data['tmp'][
-            0].max_number_of_recorded:
+        print(data['tmp'][0].number_of_recorded < data['tmp'][0].max_number_of_recorded)
+        if not data['state'] and data['relative_user']:
             keyboard_relative_user = InlineKeyboardMarkup(row_width=1)
             keyboard_relative_user.add(
                 InlineKeyboardButton(text=f'{data["relative_user"].first_name} {data["relative_user"].last_name}',
@@ -198,8 +198,7 @@ async def send_calendar(message):
                                              "После его записи ему прейдет уведомление.</i></blockquote>️"
                                              "Ваш родственник:",
                                         message_id=call.message.message_id, reply_markup=keyboard_relative_user)
-        elif not data['state'] and not data['relative_user'] and data['tmp'][0].number_of_recorded < data['tmp'][
-            0].max_number_of_recorded:
+        elif not data['state'] and not data['relative_user']:
             keyboard_no_relative_user = InlineKeyboardMarkup(row_width=1)
             keyboard_no_relative_user.row(InlineKeyboardButton(text="Назад ⬅️", callback_data="back_to_month"))
             await bot.edit_message_text(chat_id=call.message.chat.id,
@@ -208,8 +207,7 @@ async def send_calendar(message):
                                              "После его записи ему прейдет уведомление.</i></blockquote>️"
                                              "У Вас нет родственников посещающих Наш фитнес-клуб.",
                                         message_id=call.message.message_id, reply_markup=keyboard_no_relative_user)
-        if data['state'] and not date_relative and data['tmp'][0].number_of_recorded < data['tmp'][
-            0].max_number_of_recorded:
+        if data['state'] and not date_relative and (data['tmp'][0].number_of_recorded < data['tmp'][0].max_number_of_recorded):
             await set_data_user_lesson(call, date, relative_user=date_relative)
             if not data['tmp'][0].check_canceled:
                 if data['tmp'][0].number_of_recorded < data['tmp'][0].max_number_of_recorded:
@@ -226,8 +224,7 @@ async def send_calendar(message):
                         file.write(
                             f"[INFO]-[{datetime.datetime.now()}]:Вы записаны к тренеру: "
                             f"{data['tmp'][0].trainer} - На занятие: {data['tmp'][0].lesson} - {formatted_date}\n")
-        elif data['state'] and date_relative and data['state_relative_user'] and data['tmp'][0].number_of_recorded < \
-                data['tmp'][0].max_number_of_recorded:
+        elif data['state'] and date_relative and data['state_relative_user'] and (data['tmp'][0].number_of_recorded < data['tmp'][0].max_number_of_recorded):
             await set_data_user_lesson(call, date, relative_user=date_relative)
             # Обработка выбора пользователя по дате
             formatted_date = (f"{data['tmp'][0].date.strftime('%d')} {MONTHS_RU[data['tmp'][0].date.month]} "
@@ -252,8 +249,7 @@ async def send_calendar(message):
                                              "После его записи ему прейдет уведомление.</i></blockquote>️"
                                              "Ваш родственник уже записан на это занятие.",
                                         message_id=call.message.message_id, reply_markup=keyboard_no_relative_user)
-        elif data['state'] and not date_relative and data['tmp'][0].number_of_recorded >= data['tmp'][
-            0].max_number_of_recorded:
+        elif data['state'] and not date_relative and (data['tmp'][0].number_of_recorded >= data['tmp'][0].max_number_of_recorded):
             keyboard_no_relative_user = InlineKeyboardMarkup(row_width=1)
             keyboard_no_relative_user.row(InlineKeyboardButton(text="Назад ⬅️", callback_data="back_to_month"))
             await set_data_user_lesson(call, date, relative_user=date_relative, is_reserve=True)
@@ -263,8 +259,7 @@ async def send_calendar(message):
                                              f'Вы записаны в <b>РЕЗЕРВ</b></i></blockquote>\n'
                                              f'<i>*Если кто-то передумает идти на занятие, то мы Вам сообщим об этом.</i>',
                                         message_id=call.message.message_id, reply_markup=keyboard_no_relative_user)
-        elif data['state'] and date_relative and data['state_relative_user'] and data['tmp'][0].number_of_recorded >= \
-                data['tmp'][0].max_number_of_recorded:
+        elif data['state'] and date_relative and data['state_relative_user'] and (data['tmp'][0].number_of_recorded >= data['tmp'][0].max_number_of_recorded):
             keyboard_no_relative_user = InlineKeyboardMarkup(row_width=1)
             keyboard_no_relative_user.row(InlineKeyboardButton(text="Назад ⬅️", callback_data="back_to_month"))
             await set_data_user_lesson(call, date, relative_user=date_relative, is_reserve=True)
