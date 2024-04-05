@@ -1,7 +1,14 @@
+from collections import defaultdict
+from datetime import timedelta
+
 from asgiref.sync import async_to_sync
 from django.contrib import admin, messages
+from django.db.models import Sum
+from django.db.models.functions import TruncDate
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.utils import timezone
+
 from bot.main_bot import canceled_lesson_post_message_users, get_for_user_is_not_reserve
 from bot.models import TelegramUser, UserFit
 from main.tasks import publish_object
@@ -10,6 +17,8 @@ from .models import UserFitLesson, HallPromo
 from main_table_admin.models import MainTableAdmin
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from admincharts.admin import AdminChartMixin
+from admincharts.utils import months_between_dates
 
 
 class UserFitInLines(admin.TabularInline):
@@ -20,7 +29,7 @@ class UserFitInLines(admin.TabularInline):
 
 
 @admin.register(MainTableAdmin)
-class MainTableModelAdmin(admin.ModelAdmin):
+class MainTableModelAdmin(AdminChartMixin, admin.ModelAdmin):
     inlines = [UserFitInLines]
     search_fields = ['date', 'lesson', 'week_schedule']
     list_display = ['date', 'lesson', 'trainer', 'number_of_recorded', 'check_canceled',
@@ -30,6 +39,49 @@ class MainTableModelAdmin(admin.ModelAdmin):
     list_display_links = ['date', 'lesson', 'trainer', ]
     # radio_fields = {'trainer': admin.HORIZONTAL}
     autocomplete_fields = ["lesson", "trainer"]
+    list_chart_options = {"aspectRatio": 8}
+
+    def get_list_chart_config(self, queryset):
+        # Получаем базовую конфигурацию
+        config = super().get_list_chart_config(queryset)
+
+        # Добавляем настройки анимации
+        config['options']['animation'] = {
+            'duration': 1000,  # Длительность анимации в миллисекундах
+            'easing': 'easeInOutQuad',  # Функция плавности анимации
+        }
+
+        return config
+
+    def get_list_chart_data(self, queryset):
+        if not queryset:
+            return {}
+
+        data = defaultdict(int)
+        for item in queryset:
+            date_key = item.date.date()  # Получаем только дату без времени
+            data[date_key] += item.number_of_recorded
+        start_date = min(data.keys())
+        end_date = max(data.keys())
+        start_date = start_date.replace(day=1)
+        end_date = (end_date.replace(day=1) + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+        all_dates = {}
+        current_date = start_date
+        while current_date <= end_date:
+            all_dates[current_date] = 0
+            current_date += timedelta(days=1)
+        for date_key, value in data.items():
+            all_dates[date_key] = value
+        labels = [date.strftime("%d-%m-%Y") for date in sorted(all_dates.keys())]
+        totals = [all_dates[date] for date in sorted(all_dates.keys())]
+
+        return {
+            "labels": labels,
+            "datasets": [
+                {"label": "Клиенты за день", "data": totals, "backgroundColor": "#297762"},
+            ],
+        }
+
     fieldsets = [
         (
             "Основная информация",

@@ -185,7 +185,6 @@ async def send_calendar(message):
             date_relative = None
 
         data = await get_data_lesson(call.data, data=date, message=call.message.chat.id, relative_user=date_relative)
-        print(data['tmp'][0].number_of_recorded < data['tmp'][0].max_number_of_recorded)
         if not data['state'] and data['relative_user']:
             keyboard_relative_user = InlineKeyboardMarkup(row_width=1)
             keyboard_relative_user.add(

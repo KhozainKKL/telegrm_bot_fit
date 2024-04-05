@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'bot.apps.BotConfig',
     'management.apps.ManagementConfig',
     'main_table_admin.apps.MainTableAdminConfig',
+    "admincharts",
 ]
 
 MIDDLEWARE = [
