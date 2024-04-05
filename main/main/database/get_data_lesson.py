@@ -75,20 +75,20 @@ def get_data_lesson(call, data=None, message=None, relative_user=None):
 
 
     except Exception:
-        # if call.text == 'Расписание и описание групповых занятий 🧘‍♂️':
-        #     result = []
-        #
-        #     today = datetime.date.today()
-        #     start_of_week = today - datetime.timedelta(days=today.weekday())
-        #     end_of_week = start_of_week + datetime.timedelta(days=6)
-        #     next_week_start = end_of_week + datetime.timedelta(days=1)
-        #     next_week_end = next_week_start + datetime.timedelta(days=6)
-        #     week_range_str = [start_of_week.strftime('%d.%m') + '-' + end_of_week.strftime('%d.%m'),
-        #                       next_week_start.strftime('%d.%m') + '-' + next_week_end.strftime('%d.%m')]
-        #     for week in week_range_str:
-        #         file = list(DateLessonFit.objects.filter(schedule__contains=week))
-        #         result.append(file)
-        #     return result
+        if call.text == 'Расписание и описание групповых занятий 🧘‍♂️':
+            result = []
+
+            today = datetime.date.today()
+            start_of_week = today - datetime.timedelta(days=today.weekday())
+            end_of_week = start_of_week + datetime.timedelta(days=6)
+            next_week_start = end_of_week + datetime.timedelta(days=1)
+            next_week_end = next_week_start + datetime.timedelta(days=6)
+            week_range_str = [start_of_week.strftime('%d.%m') + '-' + end_of_week.strftime('%d.%m'),
+                              next_week_start.strftime('%d.%m') + '-' + next_week_end.strftime('%d.%m')]
+            for week in week_range_str:
+                file = list(DateLessonFit.objects.filter(schedule__contains=week))
+                result.append(file)
+            return result
         pass
 
 
