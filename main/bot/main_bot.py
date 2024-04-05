@@ -428,8 +428,9 @@ async def canceled_lesson_post_message_users(data):
         f'<blockquote>️<i>⚠️Внимание: Пользовательское оповещение.\n '
         f'<b>Занятие:</b> {data["lesson_title"][0]}\n'
         f'<b>Время:</b> {formatted_date}\n'
-        f'<b>ОТМЕНЕНО!😔 </b></i></blockquote>️\n'
-        f'<b>Причина:</b> {data["lesson"][0].check_canceled_description}')
+        f'<b>ОТМЕНЕНО!*😔 </b></i></blockquote>️\n'
+        f'<b>Причина:</b> {data["lesson"][0].check_canceled_description}\n'
+        f'<i>*Мы сняли Вашу запись с этого занятия.</i>')
     for user in data['tg_users']:
         await bot.send_message(chat_id=user, text=message_help)
 
