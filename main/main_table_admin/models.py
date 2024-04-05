@@ -62,7 +62,7 @@ class HallPromo(models.Model):
     date_at = models.DateField(verbose_name='Начало кации')
     date_to = models.DateField(verbose_name='Конец акции')
     promo = models.CharField(max_length=5, verbose_name='Промокод')
-    image = models.ImageField(null=True, blank=True, upload_to='bot/', verbose_name='фото')
+    image = models.ImageField(null=True, upload_to='bot/', verbose_name='фото')
 
     def __str__(self):
         return f'{self.title}'

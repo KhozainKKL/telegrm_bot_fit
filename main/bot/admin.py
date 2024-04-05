@@ -14,7 +14,7 @@ class UserFitModelAdmin(ImportExportActionModelAdmin):
     resource_class = UserFitResource
     search_fields = ['first_name', 'last_name']
     list_display = ['card', 'first_name', 'last_name', 'phone', 'relative_user']
-
+    list_display_links = ['card', 'first_name', 'last_name',]
     fieldsets = [
         (
             "Основная информация",
