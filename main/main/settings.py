@@ -32,7 +32,7 @@ DEBUG = env.bool('DEBUG')
 ALLOWED_HOSTS = ['*']
 TG_API_KEY = env.str('TG_API_KEY')
 INTERNAL_IPS = [
-    '127.0.0.1', '0.0.0.0'
+    '127.0.0.1', '0.0.0.0',
 ]
 
 INSTALLED_APPS = [

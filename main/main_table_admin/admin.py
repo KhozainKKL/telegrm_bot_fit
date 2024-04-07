@@ -164,8 +164,6 @@ def notify_users_on_cancel(sender, instance, created, **kwargs):
 
 @receiver(signal=post_save, sender=UserFitLesson, dispatch_uid="unique_id_for_notify_users_on_cancel")
 def check_user_is_not_reserve(sender, instance, created, **kwargs):
-    print(f'UserFitInLines-instance {instance.user.card}')
-    print(f'UserFitInLines-created {created}')
     result = {'lesson': None, 'lesson_title': None, 'tg_users': {}}
     if not created and not instance.is_reserve:
         user = UserFit.objects.filter(card=instance.user.card).values_list('pk', flat=True)
@@ -177,5 +175,4 @@ def check_user_is_not_reserve(sender, instance, created, **kwargs):
                 MainTableAdmin.objects.filter(pk__in=data).values_list('lesson__title', flat=True))
             if tg_user:
                 result['tg_users'][f'{tg_user}'] = tg_user
-                print(result)
                 async_to_sync(get_for_user_is_not_reserve)(result)
