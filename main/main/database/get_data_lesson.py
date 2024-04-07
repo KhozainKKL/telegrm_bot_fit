@@ -136,8 +136,9 @@ def get_data_my_lesson(query=None, data=None):
                 tmp.number_of_recorded -= 1
                 tmp.save()
                 data = UserFitLesson.objects.filter(lesson=data)
+                check_is_reserve = data[0].is_reserve
                 data[0].delete()
-                if tmp.number_of_recorded >= tmp.max_number_of_recorded:
+                if tmp.number_of_recorded >= tmp.max_number_of_recorded and not check_is_reserve:
                     first_reserve_user_fit_lesson = UserFitLesson.objects.filter(is_reserve=True).order_by('id').first()
                     first_reserve_user_fit_lesson.is_reserve = False
                     first_reserve_user_fit_lesson.save()
