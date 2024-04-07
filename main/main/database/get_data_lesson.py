@@ -66,14 +66,12 @@ def get_data_lesson(call, data=None, message=None, relative_user=None):
                 if get_user_lesson == result['tmp']:
                     result['state_relative_user'] = False
                     result['relative_user'] = None
-                if data['tmp'].number_of_recorded >= data['tmp'].max_number_of_recorded:
+                if result['tmp'][0].number_of_recorded >= result['tmp'][0].max_number_of_recorded:
                     result['is_reserve'] = True
                 elif get_user_lesson != result['tmp']:
                     result['relative_user'] = get_card
                 print(result)
                 return result
-
-
     except Exception:
         if call.text == 'Расписание и описание групповых занятий 🧘‍♂️':
             result = []
@@ -89,7 +87,6 @@ def get_data_lesson(call, data=None, message=None, relative_user=None):
                 file = list(DateLessonFit.objects.filter(schedule__contains=week))
                 result.append(file)
             return result
-        pass
 
 
 @sync_to_async
@@ -97,7 +94,7 @@ def set_data_user_lesson(message, data, relative_user=None, is_reserve=False):
     if not is_reserve:
         if not relative_user:
             tmp = MainTableAdmin.objects.filter(date=data).first()
-            user_tg = TelegramUser.objects.filter(telegram_user_id=message.from_user.id).values_list('id',
+            user_tg = TelegramUser.objects.filter(telegram_user_id=message.from_user.id).values_list('card_id',
                                                                                                      flat=True).first()
             user_fit = UserFit.objects.get(id=user_tg)
             result, created = UserFitLesson.objects.get_or_create(user=user_fit, lesson=tmp)
@@ -112,7 +109,7 @@ def set_data_user_lesson(message, data, relative_user=None, is_reserve=False):
     else:
         if not relative_user:
             tmp = MainTableAdmin.objects.filter(date=data).first()
-            user_tg = TelegramUser.objects.filter(telegram_user_id=message.from_user.id).values_list('id',
+            user_tg = TelegramUser.objects.filter(telegram_user_id=message.from_user.id).values_list('card_id',
                                                                                                      flat=True).first()
             user_fit = UserFit.objects.get(id=user_tg)
             result, created = UserFitLesson.objects.get_or_create(user=user_fit, lesson=tmp, is_reserve=is_reserve)
@@ -149,7 +146,7 @@ def get_data_my_lesson(query=None, data=None):
         if query.text == 'Занятия на которые Вы записаны📆':
             result = {'user': None, 'relative_user': None}
             # Получаем пользователя Telegram
-            user_tg = TelegramUser.objects.filter(telegram_user_id=query.from_user.id).values_list('id',
+            user_tg = TelegramUser.objects.filter(telegram_user_id=query.from_user.id).values_list('card_id',
                                                                                                    flat=True).first()
             user_fit = UserFit.objects.get(id=user_tg)
             # Получаем список занятий, на которые записан пользователь

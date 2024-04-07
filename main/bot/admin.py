@@ -1,9 +1,9 @@
 from django.contrib import admin
 
+from bot.forms import UserFitModelForm
 from bot.import_export.resourse import UserFitResource, TrainerFitResource, LessonFitResource
 from bot.models import UserFit, TrainerFit, LessonFit, DateLessonFit, TelegramUser
 from import_export.admin import ImportExportActionModelAdmin
-from django.urls import resolve
 
 admin.site.register(DateLessonFit)
 admin.site.register(TelegramUser)
@@ -14,7 +14,9 @@ class UserFitModelAdmin(ImportExportActionModelAdmin):
     resource_class = UserFitResource
     search_fields = ['first_name', 'last_name']
     list_display = ['card', 'first_name', 'last_name', 'phone', 'relative_user']
-    list_display_links = ['card', 'first_name', 'last_name',]
+    list_display_links = ['card', 'first_name', 'last_name', ]
+    autocomplete_fields = ['relative_user']
+    form = UserFitModelForm
     fieldsets = [
         (
             "Основная информация",
@@ -30,31 +32,11 @@ class UserFitModelAdmin(ImportExportActionModelAdmin):
         ),
     ]
 
-    exclude = ('relative_user',)
-
-    def get_exclude(self, request, obj=None):
-        exclude = super().get_exclude(request, obj)
-        if obj:
-            exclude = tuple(set(exclude) - {'relative_user'})
-        return exclude
-
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "relative_user":
-            # Получаем идентификатор объекта из URL
-            resolved_url = resolve(request.path_info)
-            obj_id = resolved_url.kwargs.get('object_id')
-            if obj_id:
-                try:
-                    # Получаем объект по идентификатору
-                    obj = UserFit.objects.get(pk=obj_id)
-                    # Исключаем текущий объект из queryset
-                    kwargs["queryset"] = UserFit.objects.exclude(id=obj.id)
-                except UserFit.DoesNotExist:
-                    pass
-        return super().formfield_for_foreignkey(db_field, request, **kwargs)
-
-    def full_name(self, obj):
-        return f"{obj.first_name} {obj.last_name}"
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        if not obj:
+            form.base_fields['relative_user'].widget.attrs['disabled'] = True
+        return form
 
 
 @admin.register(TrainerFit)
@@ -70,7 +52,7 @@ class TrainerFitModelAdmin(ImportExportActionModelAdmin):
                 "fields": ["first_name", "last_name", ],
             },
         ),
-     ]
+    ]
 
 
 @admin.register(LessonFit)
@@ -86,4 +68,4 @@ class UserFitModelAdmin(ImportExportActionModelAdmin):
                 "fields": ["title", "description", ],
             },
         ),
-     ]
+    ]
