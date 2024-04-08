@@ -21,7 +21,6 @@ def get_data_lesson(call, data=None, message=None, relative_user=None):
             result = {'date': list(
                 MainTableAdmin.objects.filter(date__gte=timezone.now()).values_list('date', flat=True)),
                 'lesson': list(MainTableAdmin.objects.filter(date__gte=timezone.now()))}
-            # result = list(MainTableAdmin.objects.all().values_list('date', flat=True))
             print(result)
             return result
         elif call.startswith('type_') or call.startswith('trainers_lesson_'):
@@ -124,18 +123,20 @@ def set_data_user_lesson(message, data, relative_user=None, is_reserve=False):
 
 
 @sync_to_async
-def get_data_my_lesson(query=None, data=None):
+def get_data_my_lesson(query=None, data=None, user_id=None):
     try:
         if query:
             if query.startswith('lesson_'):
-                data = list(MainTableAdmin.objects.filter(pk__in=[data]))
-                print(data)
-                return data[0]
+                result = {'lesson': list(MainTableAdmin.objects.filter(pk__in=[data])),
+                          'user': UserFitLesson.objects.filter(lesson=data).values_list('user', flat=True).first()}
+                print(result)
+                return result
             elif query.startswith('unsubscribe_'):
                 tmp = MainTableAdmin.objects.filter(pk=data).first()
-                tmp.number_of_recorded -= 1
+                if tmp.number_of_recorded != 0:
+                    tmp.number_of_recorded -= 1
                 tmp.save()
-                data = UserFitLesson.objects.filter(lesson=data)
+                data = UserFitLesson.objects.filter(user__card=int(user_id.split('-')[0]), lesson=data)
                 check_is_reserve = data[0].is_reserve
                 data[0].delete()
                 if tmp.number_of_recorded >= tmp.max_number_of_recorded and not check_is_reserve:
@@ -145,18 +146,20 @@ def get_data_my_lesson(query=None, data=None):
 
     except Exception:
         if query.text == 'Занятия на которые Вы записаны📆':
-            result = {'user': None, 'relative_user': None}
+            result = {'user': None, 'user_id': None, 'relative_user': None}
             # Получаем пользователя Telegram
             user_tg = TelegramUser.objects.filter(telegram_user_id=query.from_user.id).values_list('card_id',
                                                                                                    flat=True).first()
-            user_fit = UserFit.objects.get(id=user_tg)
+            result['user_id'] = UserFit.objects.get(id=user_tg)
             # Получаем список занятий, на которые записан пользователь
             data = list(
-                UserFitLesson.objects.filter(user=user_fit, lesson__date__gte=timezone.now()).values_list('lesson',
-                                                                                                          flat=True))
+                UserFitLesson.objects.filter(user=result['user_id'], lesson__date__gte=timezone.now()).values_list(
+                    'lesson',
+                    flat=True))
             result['user'] = list(MainTableAdmin.objects.filter(pk__in=data))
             relative_ = list(
-                UserFitLesson.objects.filter(user=user_fit.relative_user, lesson__date__gte=timezone.now()).values_list(
+                UserFitLesson.objects.filter(user=result['user_id'].relative_user,
+                                             lesson__date__gte=timezone.now()).values_list(
                     'lesson', flat=True))
             result['relative_user'] = list(MainTableAdmin.objects.filter(pk__in=relative_))
             print(result)

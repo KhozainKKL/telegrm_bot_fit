@@ -107,7 +107,8 @@ class MainTableModelAdmin(AdminChartMixin, admin.ModelAdmin):
         super().save_formset(request, form, formset, change)
 
         for deleted_object in formset.deleted_objects:
-            deleted_object.lesson.number_of_recorded -= 1
+            if deleted_object.lesson.number_of_recorded != 0:
+                deleted_object.lesson.number_of_recorded -= 1
             deleted_object.lesson.save()
 
 
@@ -165,6 +166,10 @@ def notify_users_on_cancel(sender, instance, created, **kwargs):
 @receiver(signal=post_save, sender=UserFitLesson, dispatch_uid="unique_id_for_notify_users_on_cancel")
 def check_user_is_not_reserve(sender, instance, created, **kwargs):
     result = {'lesson': None, 'lesson_title': None, 'tg_users': {}}
+    print(f'instance - {instance}')
+    print(f'sender - {sender}')
+    print(f'created - {created}')
+    print(f'kwargs - {kwargs}')
     if not created and not instance.is_reserve:
         user = UserFit.objects.filter(card=instance.user.card).values_list('pk', flat=True)
         tg_user = TelegramUser.objects.filter(card__in=user).values_list('telegram_user_id', flat=True).first()

@@ -206,7 +206,8 @@ async def send_calendar(message):
                                              "После его записи ему прейдет уведомление.</i></blockquote>️"
                                              "У Вас нет родственников посещающих Наш фитнес-клуб.",
                                         message_id=call.message.message_id, reply_markup=keyboard_no_relative_user)
-        if data['state'] and not date_relative and (data['tmp'][0].number_of_recorded < data['tmp'][0].max_number_of_recorded):
+        if data['state'] and not date_relative and (
+                data['tmp'][0].number_of_recorded < data['tmp'][0].max_number_of_recorded):
             await set_data_user_lesson(call, date, relative_user=date_relative)
             if not data['tmp'][0].check_canceled:
                 if data['tmp'][0].number_of_recorded < data['tmp'][0].max_number_of_recorded:
@@ -223,7 +224,8 @@ async def send_calendar(message):
                         file.write(
                             f"[INFO]-[{datetime.datetime.now()}]:Вы записаны к тренеру: "
                             f"{data['tmp'][0].trainer} - На занятие: {data['tmp'][0].lesson} - {formatted_date}\n")
-        elif data['state'] and date_relative and data['state_relative_user'] and (data['tmp'][0].number_of_recorded < data['tmp'][0].max_number_of_recorded):
+        elif data['state'] and date_relative and data['state_relative_user'] and (
+                data['tmp'][0].number_of_recorded < data['tmp'][0].max_number_of_recorded):
             await set_data_user_lesson(call, date, relative_user=date_relative)
             # Обработка выбора пользователя по дате
             formatted_date = (f"{data['tmp'][0].date.strftime('%d')} {MONTHS_RU[data['tmp'][0].date.month]} "
@@ -248,7 +250,8 @@ async def send_calendar(message):
                                              "После его записи ему прейдет уведомление.</i></blockquote>️"
                                              "Ваш родственник уже записан на это занятие.",
                                         message_id=call.message.message_id, reply_markup=keyboard_no_relative_user)
-        elif data['state'] and not date_relative and (data['tmp'][0].number_of_recorded >= data['tmp'][0].max_number_of_recorded):
+        elif data['state'] and not date_relative and (
+                data['tmp'][0].number_of_recorded >= data['tmp'][0].max_number_of_recorded):
             keyboard_no_relative_user = InlineKeyboardMarkup(row_width=1)
             keyboard_no_relative_user.row(InlineKeyboardButton(text="Назад ⬅️", callback_data="back_to_month"))
             await set_data_user_lesson(call, date, relative_user=date_relative, is_reserve=True)
@@ -258,7 +261,8 @@ async def send_calendar(message):
                                              f'Вы записаны в <b>РЕЗЕРВ</b></i></blockquote>\n'
                                              f'<i>*Если кто-то передумает идти на занятие, то мы Вам сообщим об этом.</i>',
                                         message_id=call.message.message_id, reply_markup=keyboard_no_relative_user)
-        elif data['state'] and date_relative and data['state_relative_user'] and (data['tmp'][0].number_of_recorded >= data['tmp'][0].max_number_of_recorded):
+        elif data['state'] and date_relative and data['state_relative_user'] and (
+                data['tmp'][0].number_of_recorded >= data['tmp'][0].max_number_of_recorded):
             keyboard_no_relative_user = InlineKeyboardMarkup(row_width=1)
             keyboard_no_relative_user.row(InlineKeyboardButton(text="Назад ⬅️", callback_data="back_to_month"))
             await set_data_user_lesson(call, date, relative_user=date_relative, is_reserve=True)
@@ -352,7 +356,7 @@ async def my_lesson(message):
             # Формируем название занятия для кнопки
             lesson_title = f"{user_lesson.lesson} - {formatted_date}"
             # Формируем callback_data для кнопки
-            callback_data = f"lesson_{user_lesson.pk}"
+            callback_data = f"lesson_{user_lesson.pk}_{data['user_id']}"
             # Добавляем кнопку в клавиатуру
             keyboard.add(InlineKeyboardButton(text=lesson_title, callback_data=callback_data))
 
@@ -368,7 +372,7 @@ async def my_lesson(message):
             # Формируем название занятия для кнопки
             lesson_title = f"{user_lesson.lesson} - {formatted_date}"
             # Формируем callback_data для кнопки
-            callback_data = f"lesson_{user_lesson.pk}"
+            callback_data = f"lesson_{user_lesson.pk}_{data['user_id'].relative_user}"
             # Добавляем кнопку в клавиатуру
             keyboard.add(InlineKeyboardButton(text=lesson_title, callback_data=callback_data))
 
@@ -378,21 +382,25 @@ async def my_lesson(message):
     @bot.callback_query_handler(lambda query: query.data.startswith('lesson_'))
     async def lesson_info(query):
         lesson_id = int(query.data.split('_')[1])
+        user_id = query.data.split('_')[2]
         # Получаем информацию о занятии по его ID
         user_lesson = await get_data_my_lesson(query.data, data=lesson_id)
+        # print(user_lesson['user'])
+        # print(user_lesson['lesson'][0])
         # Формируем подробную информацию о занятии
-        formatted_date = (f"{user_lesson.date.strftime('%d')} "
-                          f"{MONTHS_RU[user_lesson.date.month]} {user_lesson.date.strftime('%Y')} г. "
-                          f"{user_lesson.date.strftime('%H:%M')}")
+        formatted_date = (f"{user_lesson['lesson'][0].date.strftime('%d')} "
+                          f"{MONTHS_RU[user_lesson['lesson'][0].date.month]} {user_lesson['lesson'][0].date.strftime('%Y')} г. "
+                          f"{user_lesson['lesson'][0].date.strftime('%H:%M')}")
         lesson_info_text = (
-            f"<b>Занятие:</b> {user_lesson.lesson}\n"
+            f"<b>Занятие:</b> {user_lesson['lesson'][0].lesson}\n"
             f"<b>Дата и время:</b> {formatted_date}\n"
-            f"<b>Тренер:</b> {user_lesson.trainer.first_name} {user_lesson.trainer.last_name}\n"
+            f"<b>Тренер:</b> {user_lesson['lesson'][0].trainer.first_name} {user_lesson['lesson'][0].trainer.last_name}\n"
         )
 
         # Создаем клавиатуру для кнопок "Отписаться" и "Назад"
         keyboard_2 = InlineKeyboardMarkup()
-        keyboard_2.add(InlineKeyboardButton(text="Отписаться ⛔️", callback_data=f"unsubscribe_{lesson_id}"))
+        keyboard_2.add(
+            InlineKeyboardButton(text="Отписаться ⛔️", callback_data=f"unsubscribe_{lesson_id}_{user_id}"))
         keyboard_2.add(InlineKeyboardButton(text="Назад ⬅️", callback_data="back_to_lessons"))
 
         # Отправляем сообщение с подробной информацией о занятии и кнопками
@@ -407,9 +415,10 @@ async def my_lesson(message):
     @bot.callback_query_handler(lambda query: query.data.startswith('unsubscribe_'))
     async def unsubscribe_from_lesson(query):
         lesson_id = int(query.data.split('_')[1])
+        user_id = query.data.split('_')[2]
         # Получаем объект занятия, от которого нужно отписаться
 
-        await get_data_my_lesson(query.data, data=lesson_id)
+        await get_data_my_lesson(query.data, data=lesson_id, user_id=user_id)
 
         with open(f'bot/logging/{query.message.chat.id}', 'a+', encoding='utf-8') as file:
             file.write(f"[INFO]-[{datetime.datetime.now()}]:Пользователь отписался от занятия id:{lesson_id}\n")
