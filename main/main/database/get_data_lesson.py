@@ -84,7 +84,8 @@ def get_data_lesson(call, data=None, message=None, relative_user=None):
                               next_week_start.strftime('%d.%m') + '-' + next_week_end.strftime('%d.%m')]
             for week in week_range_str:
                 file = list(DateLessonFit.objects.filter(schedule__contains=week))
-                result.append(file)
+                if file:
+                    result.append(file)
             return result
 
 
