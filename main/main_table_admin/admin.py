@@ -25,7 +25,13 @@ class UserFitInLines(admin.TabularInline):
     model = UserFitLesson
     form = UserFitInLinesForm
     autocomplete_fields = ["user"]
-    # readonly_fields = ('is_reserve',)
+
+    def get_readonly_fields(self, request, obj=None):
+        readonly_fields = super().get_readonly_fields(request, obj)
+        if obj and obj.date < timezone.now():
+            # Если занятие уже прошло, делаем все поля только для чтения
+            return [field.name for field in self.model._meta.fields]
+        return readonly_fields
 
 
 @admin.register(MainTableAdmin)
@@ -37,9 +43,16 @@ class MainTableModelAdmin(AdminChartMixin, admin.ModelAdmin):
     list_filter = ('date', 'lesson', 'trainer')
     readonly_fields = ('number_of_recorded',)
     list_display_links = ['date', 'lesson', 'trainer', ]
-    # radio_fields = {'trainer': admin.HORIZONTAL}
     autocomplete_fields = ["lesson", "trainer"]
     list_chart_options = {"aspectRatio": 8}
+
+    def get_readonly_fields(self, request, obj=None):
+        readonly_fields = super().get_readonly_fields(request, obj)
+        if obj and obj.date < timezone.now():
+            # Если занятие уже прошло, делаем определенные поля только для чтения
+            return ['date', 'lesson', 'trainer', 'week_schedule', 'number_of_recorded', 'max_number_of_recorded',
+                    'check_canceled', 'check_canceled_description']
+        return readonly_fields
 
     def get_list_chart_config(self, queryset):
         # Получаем базовую конфигурацию
@@ -166,10 +179,6 @@ def notify_users_on_cancel(sender, instance, created, **kwargs):
 @receiver(signal=post_save, sender=UserFitLesson, dispatch_uid="unique_id_for_notify_users_on_cancel")
 def check_user_is_not_reserve(sender, instance, created, **kwargs):
     result = {'lesson': None, 'lesson_title': None, 'tg_users': {}}
-    print(f'instance - {instance}')
-    print(f'sender - {sender}')
-    print(f'created - {created}')
-    print(f'kwargs - {kwargs}')
     if not created and not instance.is_reserve:
         user = UserFit.objects.filter(card=instance.user.card).values_list('pk', flat=True)
         tg_user = TelegramUser.objects.filter(card__in=user).values_list('telegram_user_id', flat=True).first()
