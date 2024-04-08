@@ -385,8 +385,6 @@ async def my_lesson(message):
         user_id = query.data.split('_')[2]
         # Получаем информацию о занятии по его ID
         user_lesson = await get_data_my_lesson(query.data, data=lesson_id)
-        # print(user_lesson['user'])
-        # print(user_lesson['lesson'][0])
         # Формируем подробную информацию о занятии
         formatted_date = (f"{user_lesson['lesson'][0].date.strftime('%d')} "
                           f"{MONTHS_RU[user_lesson['lesson'][0].date.month]} {user_lesson['lesson'][0].date.strftime('%Y')} г. "
