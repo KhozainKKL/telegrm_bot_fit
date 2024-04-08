@@ -310,34 +310,34 @@ async def schedule(message):
         )
         await bot.send_message(message.chat.id, "Подробное описание тренировок.", reply_markup=markup)
 
-        @bot.callback_query_handler(func=lambda call: call.data in ['schedule_'])
-        async def choose_schedule(call):
-            result = await get_data_lesson(call.data)
-            keyboard_2 = InlineKeyboardMarkup(row_width=1)
-            for lesson_type in result:
-                keyboard_2.add(InlineKeyboardButton(text=lesson_type, callback_data=f"schedule_type_{lesson_type}"))
+    @bot.callback_query_handler(func=lambda call: call.data == 'schedule_')
+    async def choose_schedule(call):
+        result = await get_data_lesson(call.data)
+        keyboard_2 = InlineKeyboardMarkup(row_width=1)
+        for lesson_type in result:
+            keyboard_2.add(InlineKeyboardButton(text=lesson_type, callback_data=f"schedule_type_{lesson_type}"))
 
-            await bot.edit_message_text("Выберите вид занятия:", call.message.chat.id, call.message.message_id,
-                                        reply_markup=keyboard_2)
+        await bot.edit_message_text("Выберите вид занятия:", call.message.chat.id, call.message.message_id,
+                                    reply_markup=keyboard_2)
 
-            @bot.callback_query_handler(func=lambda call: call.data == "back_to_lesson")
-            async def back_to_lesson(call):
-                await bot.edit_message_text(chat_id=call.message.chat.id,
-                                            text="Подробное описание тренировок.",
-                                            message_id=call.message.message_id, reply_markup=keyboard_2)
-
-        @bot.callback_query_handler(func=lambda call: call.data.startswith('schedule_type_'))
-        async def choose_schedule(call):
-            lesson_type = call.data.split('_')[2]
-            result = await get_data_lesson(call.data, data=lesson_type)
-            print(result)
-            keyboard = InlineKeyboardMarkup(row_width=1)
-            keyboard.row(InlineKeyboardButton(text="Назад ⬅️", callback_data="back_to_lesson"))
-
+        @bot.callback_query_handler(func=lambda call: call.data == "back_to_lesson")
+        async def back_to_lesson(call):
             await bot.edit_message_text(chat_id=call.message.chat.id,
-                                        text=f'<b>Название: {result.title}</b>\n'
-                                             f'Описание: {result.description}',
-                                        message_id=call.message.message_id, reply_markup=keyboard)
+                                        text="Подробное описание тренировок.",
+                                        message_id=call.message.message_id, reply_markup=keyboard_2)
+
+    @bot.callback_query_handler(func=lambda call: call.data.startswith('schedule_type_'))
+    async def choose_schedule(call):
+        lesson_type = call.data.split('_')[2]
+        result = await get_data_lesson(call.data, data=lesson_type)
+        print(result)
+        keyboard = InlineKeyboardMarkup(row_width=1)
+        keyboard.row(InlineKeyboardButton(text="Назад ⬅️", callback_data="back_to_lesson"))
+
+        await bot.edit_message_text(chat_id=call.message.chat.id,
+                                    text=f'<b>Название: {result.title}</b>\n'
+                                         f'Описание: {result.description}',
+                                    message_id=call.message.message_id, reply_markup=keyboard)
 
 
 @bot.message_handler(regexp='Занятия на которые Вы записаны📆')
