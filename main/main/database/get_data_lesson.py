@@ -129,7 +129,7 @@ def get_data_my_lesson(query=None, data=None, user_id=None):
         if query:
             if query.startswith('lesson_'):
                 result = {'lesson': list(MainTableAdmin.objects.filter(pk__in=[data])),
-                          'user': UserFitLesson.objects.filter(lesson=data).values_list('user', flat=True).first()}
+                          'user': UserFitLesson.objects.filter(lesson=data).values_list('is_reserve', flat=True).first()}
                 print(result)
                 return result
             elif query.startswith('unsubscribe_'):

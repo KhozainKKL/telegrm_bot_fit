@@ -389,11 +389,19 @@ async def my_lesson(message):
         formatted_date = (f"{user_lesson['lesson'][0].date.strftime('%d')} "
                           f"{MONTHS_RU[user_lesson['lesson'][0].date.month]} {user_lesson['lesson'][0].date.strftime('%Y')} г. "
                           f"{user_lesson['lesson'][0].date.strftime('%H:%M')}")
-        lesson_info_text = (
-            f"<b>Занятие:</b> {user_lesson['lesson'][0].lesson}\n"
-            f"<b>Дата и время:</b> {formatted_date}\n"
-            f"<b>Тренер:</b> {user_lesson['lesson'][0].trainer.first_name} {user_lesson['lesson'][0].trainer.last_name}\n"
-        )
+        if not user_lesson['user']:
+            lesson_info_text = (
+                f"<b>Занятие:</b> {user_lesson['lesson'][0].lesson}\n"
+                f"<b>Дата и время:</b> {formatted_date}\n"
+                f"<b>Тренер:</b> {user_lesson['lesson'][0].trainer.first_name} {user_lesson['lesson'][0].trainer.last_name}\n"
+            )
+        elif user_lesson['user']:
+            lesson_info_text = (
+                f"<blockquote>️<i><b>Обращаем Ваше внимание: что Вы находитесь в резерве.</b></i></blockquote>️"
+                f"<b>Занятие:</b> {user_lesson['lesson'][0].lesson}\n"
+                f"<b>Дата и время:</b> {formatted_date}\n"
+                f"<b>Тренер:</b> {user_lesson['lesson'][0].trainer.first_name} {user_lesson['lesson'][0].trainer.last_name}\n"
+            )
 
         # Создаем клавиатуру для кнопок "Отписаться" и "Назад"
         keyboard_2 = InlineKeyboardMarkup()
