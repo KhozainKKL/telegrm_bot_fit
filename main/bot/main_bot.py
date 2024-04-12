@@ -174,10 +174,8 @@ async def schedule(message):
     if not file_path:
         await bot.delete_message(message.chat.id, sent_message.message_id)
         await bot.send_message(message.chat.id, "Расписания еще нет.")
-    elif not file_path[1]:
-        await bot.delete_message(message.chat.id, sent_message.message_id)
-        await bot.send_message(message.chat.id, "Расписания на следующую неделю еще нет.")
-    else:
+
+    if file_path:
         for week in file_path:
             async with aiofiles.open(week[0].schedule.path, 'rb') as file:
                 await bot.send_document(message.chat.id, file)
