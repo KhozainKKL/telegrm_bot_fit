@@ -1,11 +1,9 @@
 import telebot
-import datetime
 import aiofiles
 from django.conf import settings
 
 from main.database.config import MainConfigTelegramBot, AddNewUserMiddleware as middleware, \
     AllMarkUpForButtonBot as markup, SampleTextBot as smpl_text
-from main_table_admin.models import MONTHS_RU
 from telebot.async_telebot import AsyncTeleBot
 
 bot = AsyncTeleBot(settings.TG_API_KEY, parse_mode='HTML')
@@ -32,23 +30,18 @@ async def send_calendar(message):
             await choose_any(call.message, result)
 
     async def choose_by_type(message, lesson_types):
-        # Получаем все виды занятий из базы данных
         await bot.edit_message_text("Выберите вид занятия:", message.chat.id, message.message_id,
                                     reply_markup=markup.get_main_lesson_choose_by_type(lesson_types))
 
     @bot.callback_query_handler(func=lambda call: call.data.startswith('type_'))
     async def handle_lesson_type(call):
-        # Получаем выбранный тип занятия из call.data
         lesson_type = call.data.split('_')[1]
         lesson_check = []
-        # Получаем даты занятий для выбранного типа занятия
         dates = await config.get_data_lesson(call.data, data=lesson_type)
-        # Отображаем доступные даты занятий
         for lesson in dates['lesson']:
             if (lesson.max_number_of_recorded - lesson.number_of_recorded) <= 3:
                 lesson_check.append(config.formatted_date(lesson))
 
-        # Отправляем сообщение с выбором даты занятия
         if lesson_check:
             await bot.edit_message_text(
                 f"<blockquote>️<i> Обратите внимание, что на занятие(я): \n<b>{', '.join(lesson_check)}\n"
@@ -91,7 +84,6 @@ async def send_calendar(message):
                                         reply_markup=markup.get_main_lesson_handle_lesson_type(data['date']))
 
     async def choose_any(message, dates):
-        # Получаем все даты занятий из базы данных
         lesson_check = []
         for lesson in dates['lesson']:
             if (lesson.max_number_of_recorded - lesson.number_of_recorded) <= 3:
@@ -131,7 +123,6 @@ async def send_calendar(message):
             await config.set_data_user_lesson(call, date, relative_user=date_relative)
             if not data['tmp'][0].check_canceled:
                 if data['tmp'][0].number_of_recorded < data['tmp'][0].max_number_of_recorded:
-                    # Обработка выбора пользователя по дате
                     formatted_date = config.formatted_date(data['tmp'][0])
                     await bot.edit_message_text(chat_id=call.message.chat.id,
                                                 text=f"<b>Вы записаны к тренеру: {data['tmp'][0].trainer}\n"
@@ -142,7 +133,6 @@ async def send_calendar(message):
         elif data['state'] and date_relative and data['state_relative_user'] and (
                 data['tmp'][0].number_of_recorded < data['tmp'][0].max_number_of_recorded):
             await config.set_data_user_lesson(call, date, relative_user=date_relative)
-            # Обработка выбора пользователя по дате
             formatted_date = config.formatted_date(data['tmp'][0])
             await bot.edit_message_text(chat_id=call.message.chat.id,
                                         text=f"<b>Родственник {data['relative_user'].first_name} "
@@ -190,10 +180,7 @@ async def schedule(message):
     else:
         for week in file_path:
             async with aiofiles.open(week[0].schedule.path, 'rb') as file:
-                # Отправляем документ пользователю
                 await bot.send_document(message.chat.id, file)
-
-        # Удаляем сообщение о начале отправки файла
         await bot.delete_message(message.chat.id, sent_message.message_id)
 
         await bot.send_message(message.chat.id, "Подробное описание тренировок.",
@@ -216,7 +203,6 @@ async def schedule(message):
     async def choose_schedule(call):
         lesson_type = call.data.split('_')[2]
         result = await config.get_data_lesson(call.data, data=lesson_type)
-        # print(result)
         await bot.edit_message_text(chat_id=call.message.chat.id,
                                     text=f'<b>Название: {result.title}</b>\n'
                                          f'Описание: {result.description}',
@@ -243,9 +229,7 @@ async def my_lesson(message):
         lesson_id = int(query.data.split('_')[1])
         user_id = query.data.split('_')[2]
         key = query.data.split('_')[3]
-        # Получаем информацию о занятии по его ID
         user_lesson = await config.get_data_my_lesson(query.data, data=lesson_id)
-        # Формируем подробную информацию о занятии
         formatted_date = config.formatted_date(user_lesson['lesson'][0])
         if not user_lesson['user']:
             lesson_info_text = (
@@ -260,10 +244,6 @@ async def my_lesson(message):
                 f"<b>Дата и время:</b> {formatted_date}\n"
                 f"<b>Тренер:</b> {user_lesson['lesson'][0].trainer.first_name} {user_lesson['lesson'][0].trainer.last_name}\n"
             )
-
-        # Создаем клавиатуру для кнопок "Отписаться" и "Назад"
-
-        # Отправляем сообщение с подробной информацией о занятии и кнопками
         await bot.edit_message_text(chat_id=query.message.chat.id, text=lesson_info_text,
                                     message_id=query.message.message_id,
                                     reply_markup=markup.button_for_lesson_you_zapis_unsubscribe(
@@ -286,13 +266,10 @@ async def my_lesson(message):
     async def unsubscribe_from_lesson(query):
         lesson_id = int(query.data.split('_')[1])
         user_id = query.data.split('_')[2]
-        # Получаем объект занятия, от которого нужно отписаться
 
         await config.get_data_my_lesson(query.data, data=lesson_id, user_id=user_id)
-        # Удаляем запись пользователя о занятии
         await bot.edit_message_text(chat_id=query.message.chat.id, text="Вы успешно отписались от занятия.",
                                     message_id=query.message.message_id)
-        # Повторно вызываем функцию отображения списка занятий
 
 
 async def canceled_lesson_post_message_users(data):
@@ -308,7 +285,6 @@ async def get_for_user_is_not_reserve(data):
 
 
 async def send_promo_users(result):
-    """ Отправка сообщения об акции в бот """
     message_help = smpl_text.send_promo_users(result)
     for user in result['users']:
         await bot.send_photo(chat_id=user, photo=open(result["instance"]["image"], "rb"), caption=message_help)
