@@ -457,9 +457,7 @@ class SampleTextBot:
 
     @staticmethod
     def canceled_lesson_post_message_users(data):
-        formatted_date = (f"{data['lesson'][0].date.strftime('%d')} "
-                          f"{MONTHS_RU[data['lesson'][0].date.month]} {data['lesson'][0].date.strftime('%Y')} г. "
-                          f"{data['lesson'][0].date.strftime('%H:%M')}")
+        formatted_date = MainConfigTelegramBot.formatted_date(data['lesson'][0])
         return (
             f'<blockquote>️<i>⚠️Внимание: Пользовательское оповещение.\n '
             f'<b>Занятие:</b> {data["lesson_title"][0]}\n'
@@ -467,6 +465,15 @@ class SampleTextBot:
             f'<b>ОТМЕНЕНО!*😔 </b></i></blockquote>️'
             f'<b>Причина:</b> {data["lesson"][0].check_canceled_description}\n\n'
             f'<i>*Мы сняли Вашу запись с этого занятия.</i>')
+
+    @staticmethod
+    def change_lesson_post_message_users(data):
+        formatted_date = MainConfigTelegramBot.formatted_date(data['lesson'][0])
+        return (
+            f'<blockquote>️<i>⚠️Внимание: Пользовательское оповещение.\n '
+            f'<b>ИЗМЕНЕНО НА:</b></i></blockquote>️\n '
+            f'<b>Занятие:</b> {data["lesson_title"][0]}\n'
+            f'<b>Время:</b> {formatted_date}\n')
 
     @staticmethod
     def get_for_user_is_not_reserve(data):

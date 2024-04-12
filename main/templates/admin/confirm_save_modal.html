@@ -1,0 +1,60 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+
+{% block content %}
+    {{ block.super }}
+
+    {% block submit_buttons %}
+    <div class="submit-row">
+        <!-- Ваша собственная кнопка -->
+        <input class="js-django-admin-custom-modal" data-target-name="confirm-save-modal" type="button" value="{% trans 'Сохранить' %}">
+    </div>
+    {% endblock %}
+
+    <!-- Модальное окно с пользовательским содержимым -->
+    <div data-django-admin-custom-modal="confirm-save-modal" style="display:none;">
+        <div id="confirmSaveModal" class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title">⚠️⚠️⚠️⚠️</h2>
+                    </div>
+                    <div class="modal-body">
+                        <p>Обратите внимание, если клиенты были записаны на занятие,</p>
+                        <p><b>то при изменении раздела "Основная информация" им прейдет уведомление об изменении либо отмене занятия.</b></p>
+                        <p>Не сохраняйте, если не уверены во введенных данных. Вы уверены, что хотите сохранить изменения?</p>
+                    </div>
+                    <div class="modal-footer">
+                       <input type="button" id="confirmSaveBtn" class="btn btn-primary" value="Я уверен(а).">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <style>
+        /* Скрыть стандартные кнопки сохранения */
+        .submit-row input[type="submit"] {
+            display: none;
+        }
+    </style>
+    <script>
+        (function ($) {
+            $(document).ready(function () {
+                // Показываем модальное окно при клике на кнопку "Открыть модальное окно"
+                $('#customSaveButton').on('click', function () {
+                    $('#confirmSaveModal').modal('show');
+                });
+
+                // Отправляем форму при нажатии на кнопку "Сохранить" в модальном окне
+                $('#confirmSaveBtn').on('click', function () {
+                    // Находим форму и отправляем ее
+                    $('form').submit();
+                });
+            });
+        })(django.jQuery);
+    </script>
+{% endblock %}

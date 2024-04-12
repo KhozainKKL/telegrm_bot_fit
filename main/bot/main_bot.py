@@ -2,6 +2,7 @@ import telebot
 import aiofiles
 from django.conf import settings
 
+from bot.models import MONTHS_RU
 from main.database.config import MainConfigTelegramBot, AddNewUserMiddleware as middleware, \
     AllMarkUpForButtonBot as markup, SampleTextBot as smpl_text
 from telebot.async_telebot import AsyncTeleBot
@@ -272,6 +273,12 @@ async def my_lesson(message):
 
 async def canceled_lesson_post_message_users(data):
     message_help = smpl_text.canceled_lesson_post_message_users(data)
+    for user in data['tg_users']:
+        await bot.send_message(chat_id=user, text=message_help)
+
+
+async def change_lesson_post_message_users(data):
+    message_help = smpl_text.change_lesson_post_message_users(data)
     for user in data['tg_users']:
         await bot.send_message(chat_id=user, text=message_help)
 

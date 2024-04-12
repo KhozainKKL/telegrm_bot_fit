@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'management.apps.ManagementConfig',
     'main_table_admin.apps.MainTableAdminConfig',
     "admincharts",
+    'custom_modal_admin',
 ]
 
 MIDDLEWARE = [

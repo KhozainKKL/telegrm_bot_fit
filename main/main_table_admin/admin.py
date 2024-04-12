@@ -2,23 +2,23 @@ from collections import defaultdict
 from datetime import timedelta
 
 from asgiref.sync import async_to_sync
+from custom_modal_admin.admin import CustomModalAdmin
 from django.contrib import admin, messages
-from django.db.models import Sum
-from django.db.models.functions import TruncDate
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 
-from bot.main_bot import canceled_lesson_post_message_users, get_for_user_is_not_reserve
+from bot.main_bot import canceled_lesson_post_message_users, get_for_user_is_not_reserve, \
+    change_lesson_post_message_users
 from bot.models import TelegramUser, UserFit
 from main.tasks import publish_object
 from .forms import UserFitInLinesForm
 from .models import UserFitLesson, HallPromo
 from main_table_admin.models import MainTableAdmin
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from admincharts.admin import AdminChartMixin
-from admincharts.utils import months_between_dates
 
 
 class UserFitInLines(admin.TabularInline):
@@ -35,7 +35,7 @@ class UserFitInLines(admin.TabularInline):
 
 
 @admin.register(MainTableAdmin)
-class MainTableModelAdmin(AdminChartMixin, admin.ModelAdmin):
+class MainTableModelAdmin(AdminChartMixin, CustomModalAdmin, admin.ModelAdmin):
     inlines = [UserFitInLines]
     search_fields = ['date', 'lesson', 'week_schedule']
     list_display = ['date', 'lesson', 'trainer', 'number_of_recorded', 'check_canceled',
@@ -45,6 +45,22 @@ class MainTableModelAdmin(AdminChartMixin, admin.ModelAdmin):
     list_display_links = ['date', 'lesson', 'trainer', ]
     autocomplete_fields = ["lesson", "trainer"]
     list_chart_options = {"aspectRatio": 8}
+    change_form_template = 'admin/confirm_save_modal.html'
+    fieldsets = [
+        (
+            "Основная информация",
+            {
+                "fields": ["date", "week_schedule", "lesson", "trainer",
+                           ("max_number_of_recorded", "number_of_recorded")],
+            },
+        ),
+        (
+            "Отмена занятия",
+            {
+                "fields": ["check_canceled", "check_canceled_description"],
+            },
+        ),
+    ]
 
     def get_readonly_fields(self, request, obj=None):
         readonly_fields = super().get_readonly_fields(request, obj)
@@ -95,22 +111,6 @@ class MainTableModelAdmin(AdminChartMixin, admin.ModelAdmin):
             ],
         }
 
-    fieldsets = [
-        (
-            "Основная информация",
-            {
-                "fields": ["date", "week_schedule", "lesson", "trainer",
-                           ("max_number_of_recorded", "number_of_recorded")],
-            },
-        ),
-        (
-            "Отмена занятия",
-            {
-                "fields": ["check_canceled", "check_canceled_description"],
-            },
-        ),
-    ]
-
     def save_formset(self, request, form, formset, change):
         instances = formset.save(commit=False)
         for instance in instances:
@@ -153,9 +153,9 @@ class HallPromoModelAdmin(admin.ModelAdmin):
 @receiver(signal=post_save, sender=MainTableAdmin, dispatch_uid="unique_id_for_notify_users_on_cancel")
 def notify_users_on_cancel(sender, instance, created, **kwargs):
     result = {'lesson': None, 'lesson_title': None, 'tg_users': {}}
+    users = UserFitLesson.objects.filter(lesson=instance).values_list('user', flat=True)
+    data = UserFitLesson.objects.filter(lesson=instance).values_list('lesson', flat=True)
     if not created and instance.check_canceled:
-        users = UserFitLesson.objects.filter(lesson=instance).values_list('user', flat=True)
-        data = UserFitLesson.objects.filter(lesson=instance).values_list('lesson', flat=True)
         if data:
             result['lesson'] = list(MainTableAdmin.objects.filter(pk__in=data))
             result['lesson_title'] = list(
@@ -174,6 +174,16 @@ def notify_users_on_cancel(sender, instance, created, **kwargs):
                     data.delete()
                     print(result)
                     async_to_sync(canceled_lesson_post_message_users)(result)
+    elif not instance.check_canceled:
+        if data:
+            result['lesson'] = list(MainTableAdmin.objects.filter(pk__in=data))
+            result['lesson_title'] = list(
+                MainTableAdmin.objects.filter(pk__in=data).values_list('lesson__title', flat=True))
+            tg_users = TelegramUser.objects.filter(card__in=users).values_list('telegram_user_id', flat=True)
+            if tg_users:
+                for tg_user in tg_users:
+                    result['tg_users'][f'{tg_user}'] = tg_user
+                async_to_sync(change_lesson_post_message_users)(result)
 
 
 @receiver(signal=post_save, sender=UserFitLesson, dispatch_uid="unique_id_for_notify_users_on_cancel")
