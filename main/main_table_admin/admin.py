@@ -4,8 +4,7 @@ from datetime import timedelta
 from asgiref.sync import async_to_sync
 from custom_modal_admin.admin import CustomModalAdmin
 from django.contrib import admin, messages
-from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
-from django.template.loader import render_to_string
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
 
@@ -16,7 +15,7 @@ from main.tasks import publish_object
 from .forms import UserFitInLinesForm
 from .models import UserFitLesson, HallPromo
 from main_table_admin.models import MainTableAdmin
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 from admincharts.admin import AdminChartMixin
 
@@ -165,7 +164,6 @@ def notify_users_on_cancel(sender, instance, created, **kwargs):
                 tmp = MainTableAdmin.objects.filter(pk__in=data).first()
                 for tg_user in tg_users:
                     result['tg_users'][f'{tg_user}'] = tg_user
-                print(len(tg_users))
                 if tmp.number_of_recorded != 0:
                     tmp.number_of_recorded -= len(tg_users)
                     tmp.save()
@@ -174,7 +172,7 @@ def notify_users_on_cancel(sender, instance, created, **kwargs):
                     data.delete()
                     print(result)
                     async_to_sync(canceled_lesson_post_message_users)(result)
-    elif not instance.check_canceled:
+    elif not instance.check_canceled and instance.tracker.changed():
         if data:
             result['lesson'] = list(MainTableAdmin.objects.filter(pk__in=data))
             result['lesson_title'] = list(

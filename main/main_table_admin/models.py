@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-
+from model_utils import FieldTracker
 from bot.models import TrainerFit, DateLessonFit, LessonFit, UserFit
 
 MONTHS_RU = {
@@ -24,6 +24,8 @@ class MainTableAdmin(models.Model):
     check_canceled = models.BooleanField(default=False, verbose_name='Отменить занятие?')
     check_canceled_description = models.CharField(max_length=255, blank=True, null=True,
                                                   verbose_name='Причина отмены занятия')
+
+    tracker = FieldTracker(fields=['date', 'lesson', 'trainer'])
 
     def clean(self):
         if self.check_canceled and not self.check_canceled_description:
