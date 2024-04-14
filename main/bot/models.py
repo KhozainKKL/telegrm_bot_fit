@@ -79,7 +79,11 @@ class DateLessonFit(models.Model):
 
     create_at = models.DateField(verbose_name='Дата начала:')
     create_to = models.DateField(verbose_name='Дата окончания:')
-    schedule = models.FileField(upload_to='bot/', verbose_name='Расписание')
+    schedule = models.FileField(upload_to='bot/', verbose_name='Расписание',
+                                validators=[RegexValidator(regex=r'^\d{2}.\d{2}-\d{2}.\d{2}$',
+                                                           message='Файл название файла должно содержать интервал меся и день, например: 01.13-01.20')
+                                            ]
+                                )
 
     def __str__(self):
         formatted_date_at = f"{self.create_at.strftime('%d')} {MONTHS_RU[self.create_at.month]} {self.create_at.strftime('%Y')} г."
