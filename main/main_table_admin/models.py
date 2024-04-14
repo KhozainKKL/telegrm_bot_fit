@@ -56,12 +56,12 @@ class UserFitLesson(models.Model):
 
 class HallPromo(models.Model):
     class Meta:
-        verbose_name = 'Акция фитнес-зала'
-        verbose_name_plural = 'Акции фитнес-зала'
+        verbose_name = 'Акция'
+        verbose_name_plural = 'Акции'
 
     title = models.CharField(max_length=50, verbose_name='Название')
     description = models.CharField(max_length=255, verbose_name='Описание')
-    date_at = models.DateField(verbose_name='Начало кации')
+    date_at = models.DateField(verbose_name='Начало акции')
     date_to = models.DateField(verbose_name='Конец акции')
     promo = models.CharField(max_length=5, verbose_name='Промокод')
     image = models.ImageField(null=True, upload_to='bot/', verbose_name='фото')

@@ -10,7 +10,7 @@ MONTHS_RU = {
 
 class TelegramUser(models.Model):
     class Meta:
-        verbose_name = 'Пользователь тлеграмма'
+        verbose_name = 'Пользователь телеграмма'
         verbose_name_plural = 'Пользователи телеграмма'
 
     card = models.OneToOneField('UserFit', on_delete=models.CASCADE, unique=True, blank=True, null=True,
@@ -34,8 +34,10 @@ class UserFit(models.Model):
     card = models.PositiveIntegerField(blank=True, null=True, verbose_name='Номер карты', db_index=True)
     first_name = models.CharField(max_length=20, blank=True, null=True, verbose_name='Имя', db_index=True)
     last_name = models.CharField(max_length=20, blank=True, null=True, verbose_name='Фамилия', db_index=True)
-    phone = models.CharField(max_length=16, verbose_name='Телефон', validators=[RegexValidator(regex=r'^\+7-\d{3}-\d{3}-\d{2}-\d{2}$',
-        message='Телефонный номер должен быть в формате +7-999-999-99-99'),])
+    phone = models.CharField(max_length=16, verbose_name='Телефон',
+                             validators=[RegexValidator(regex=r'^\+7-\d{3}-\d{3}-\d{2}-\d{2}$',
+                                                        message='Телефонный номер должен быть '
+                                                                'в формате +7-999-999-99-99'), ])
     relative_user = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE,
                                       verbose_name='Родственник')
 
