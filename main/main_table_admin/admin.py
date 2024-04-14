@@ -36,7 +36,7 @@ class UserFitInLines(admin.TabularInline):
 @admin.register(MainTableAdmin)
 class MainTableModelAdmin(AdminChartMixin, CustomModalAdmin, admin.ModelAdmin):
     inlines = [UserFitInLines]
-    search_fields = ['date', 'lesson', 'week_schedule']
+    search_fields = ['date', 'lesson__title', 'trainer__first_name', 'trainer__last_name']
     list_display = ['date', 'lesson', 'trainer', 'number_of_recorded', 'check_canceled',
                     'check_canceled_description']
     list_filter = ('date', 'lesson', 'trainer')
@@ -45,6 +45,7 @@ class MainTableModelAdmin(AdminChartMixin, CustomModalAdmin, admin.ModelAdmin):
     autocomplete_fields = ["lesson", "trainer"]
     list_chart_options = {"aspectRatio": 8}
     change_form_template = 'admin/confirm_save_modal.html'
+    ordering = ['date']
     fieldsets = [
         (
             "Основная информация",
