@@ -24,6 +24,8 @@ class MainTableAdmin(models.Model):
     check_canceled = models.BooleanField(default=False, verbose_name='Отменить занятие?')
     check_canceled_description = models.CharField(max_length=255, blank=True, null=True,
                                                   verbose_name='Причина отмены занятия')
+    check_change_description = models.CharField(max_length=255, blank=True, null=True,
+                                                verbose_name='Причина изменения занятия')
 
     tracker = FieldTracker(fields=['date', 'lesson', 'trainer'])
 
@@ -31,6 +33,11 @@ class MainTableAdmin(models.Model):
         if self.check_canceled and not self.check_canceled_description:
             raise ValidationError(
                 {'check_canceled_description': 'Причина отмены занятия обязательна, если занятие отменено.'})
+        if not self.check_canceled and self.tracker.changed() and not self.check_change_description:
+            raise ValidationError(
+                {
+                    'check_change_description': 'Причина изменения занятия обязательна, если данные (тренер, занятие или дата) изменены.'}
+            )
 
     def save(self, *args, **kwargs):
         self.full_clean()  # Вызываем метод clean перед сохранением

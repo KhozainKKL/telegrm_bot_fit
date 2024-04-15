@@ -55,10 +55,12 @@ class MainTableModelAdmin(AdminChartMixin, CustomModalAdmin, admin.ModelAdmin):
             },
         ),
         (
-            "Отмена занятия",
+            "ОТМЕНА И ИЗМЕНЕНИЕ",
             {
-                "fields": ["check_canceled", "check_canceled_description"],
+                "classes": ["collapse", "wide"],
+                "fields": [("check_canceled", "check_canceled_description"), "check_change_description"],
             },
+
         ),
     ]
 
@@ -67,7 +69,7 @@ class MainTableModelAdmin(AdminChartMixin, CustomModalAdmin, admin.ModelAdmin):
         if obj and obj.date < timezone.now():
             # Если занятие уже прошло, делаем определенные поля только для чтения
             return ['date', 'lesson', 'trainer', 'week_schedule', 'number_of_recorded', 'max_number_of_recorded',
-                    'check_canceled', 'check_canceled_description']
+                    'check_canceled', 'check_canceled_description', 'check_change_description']
         return readonly_fields
 
     def get_list_chart_config(self, queryset):
@@ -171,18 +173,20 @@ def notify_users_on_cancel(sender, instance, created, **kwargs):
                 elif tmp.number_of_recorded == 0:
                     data = UserFitLesson.objects.filter(lesson__in=data)
                     data.delete()
-                    print(result)
                     async_to_sync(canceled_lesson_post_message_users)(result)
-    elif not instance.check_canceled and instance.tracker.changed():
+
+    elif not instance.check_canceled and instance.tracker.changed() and instance.check_change_description:
         if data:
             result['lesson'] = list(MainTableAdmin.objects.filter(pk__in=data))
             result['lesson_title'] = list(
-                MainTableAdmin.objects.filter(pk__in=data).values_list('lesson__title', flat=True))
+                MainTableAdmin.objects.filter(pk__in=data).values_list('lesson__title', 'trainer__first_name',
+                                                                       'check_change_description'))
             tg_users = TelegramUser.objects.filter(card__in=users).values_list('telegram_user_id', flat=True)
             if tg_users:
                 for tg_user in tg_users:
                     result['tg_users'][f'{tg_user}'] = tg_user
                 async_to_sync(change_lesson_post_message_users)(result)
+                MainTableAdmin.objects.filter(pk=instance.pk).update(check_change_description=None)
 
 
 @receiver(signal=post_save, sender=UserFitLesson, dispatch_uid="unique_id_for_notify_users_on_cancel")

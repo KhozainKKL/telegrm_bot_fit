@@ -1,5 +1,6 @@
 import telebot
 import aiofiles
+from asgiref.sync import sync_to_async
 from django.conf import settings
 
 from bot.models import MONTHS_RU

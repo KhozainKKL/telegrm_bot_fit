@@ -471,9 +471,12 @@ class SampleTextBot:
         formatted_date = MainConfigTelegramBot.formatted_date(data['lesson'][0])
         return (
             f'<blockquote>️<i>⚠️Внимание: Пользовательское оповещение.\n '
-            f'<b>ИЗМЕНЕНО НА:</b></i></blockquote>️\n '
-            f'<b>Занятие:</b> {data["lesson_title"][0]}\n'
+            f'<b>Занятие на которое вы были записаны изменено.</b></i></blockquote>️\n '
+            f'{data["lesson_title"][0][2]}\n'
+            f'<b>Занятие:</b> {data["lesson_title"][0][0]}\n'
+            f'<b>Тренер:</b> {data["lesson_title"][0][1]}\n'
             f'<b>Время:</b> {formatted_date}\n')
+
 
     @staticmethod
     def get_for_user_is_not_reserve(data):
