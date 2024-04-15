@@ -33,7 +33,7 @@ class MainTableAdmin(models.Model):
         if self.check_canceled and not self.check_canceled_description:
             raise ValidationError(
                 {'check_canceled_description': 'Причина отмены занятия обязательна, если занятие отменено.'})
-        if not self.check_canceled and self.tracker.changed() and not self.check_change_description:
+        if not self._state.adding and not self.check_canceled and self.tracker.changed() and not self.check_change_description:
             raise ValidationError(
                 {
                     'check_change_description': 'Причина изменения занятия обязательна, если данные (тренер, занятие или дата) изменены.'}
