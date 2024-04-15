@@ -1,3 +1,6 @@
+import os
+
+from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
 
@@ -72,6 +75,23 @@ class LessonFit(models.Model):
         return f'{self.title}'
 
 
+def validate_file_extension(value):
+    ext = os.path.splitext(value.name)[1]  # [0] returns path+filename
+    valid_extensions = ['.jpg', '.jpeg', '.png', '.pdf']
+    if not ext.lower() in valid_extensions:
+        raise ValidationError('Не поддерживаемый тип файла.')
+
+
+class ImageOrDocumentField(models.FileField):
+    def __init__(self, *args, **kwargs):
+        super(ImageOrDocumentField, self).__init__(*args, **kwargs)
+
+    def clean(self, *args, **kwargs):
+        data = super(ImageOrDocumentField, self).clean(*args, **kwargs)
+        validate_file_extension(data)
+        return data
+
+
 class DateLessonFit(models.Model):
     class Meta:
         verbose_name = 'Недельное расписание группового занятия'
@@ -79,11 +99,7 @@ class DateLessonFit(models.Model):
 
     create_at = models.DateField(verbose_name='Дата начала:')
     create_to = models.DateField(verbose_name='Дата окончания:')
-    schedule = models.FileField(upload_to='bot/', verbose_name='Расписание',
-                                validators=[RegexValidator(regex=r'^\d{2}.\d{2}-\d{2}.\d{2}$',
-                                                           message='Файл название файла должно содержать интервал меся и день, например: 01.13-01.20')
-                                            ]
-                                )
+    schedule = ImageOrDocumentField(upload_to='bot/lesson_schedule/', verbose_name='Расписание')
 
     def __str__(self):
         formatted_date_at = f"{self.create_at.strftime('%d')} {MONTHS_RU[self.create_at.month]} {self.create_at.strftime('%Y')} г."
