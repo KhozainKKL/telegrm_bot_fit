@@ -61,16 +61,19 @@ async def send_calendar(message):
     @bot.callback_query_handler(func=lambda call: call.data.startswith('trainer_'))
     async def handle_trainer_lesson_type(call):
         trainer = call.data.split('_')[1]
+        print(trainer)
         lesson = await config.get_data_lesson(call.data, data=trainer)
         await bot.edit_message_text(chat_id=call.message.chat.id, text="Выберите вид занятия:",
                                     message_id=call.message.message_id,
-                                    reply_markup=markup.get_main_lesson_handle_trainer_lesson_type(lesson))
+                                    reply_markup=markup.get_main_lesson_handle_trainer_lesson_type(lesson, trainer))
 
     @bot.callback_query_handler(func=lambda call: call.data.startswith('trainers_lesson_'))
     async def handle_trainer_lesson_date(call):
         lesson = call.data.split('_')[2]
+        trainer_id = call.data.split('_')[3]
+        data = {'lesson': lesson, 'trainer_id': trainer_id}
         lesson_check = []
-        data = await config.get_data_lesson(call.data, data=lesson)
+        data = await config.get_data_lesson(call.data, data=data)
 
         for lesson in data['lesson']:
             if (lesson.max_number_of_recorded - lesson.number_of_recorded) <= 3:

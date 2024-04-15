@@ -13,11 +13,27 @@ from bot.main_bot import canceled_lesson_post_message_users, get_for_user_is_not
 from bot.models import TelegramUser, UserFit
 from main.tasks import publish_object
 from .forms import UserFitInLinesForm
-from .models import UserFitLesson, HallPromo
+from .models import UserFitLesson, HallPromo, MONTHS_RU
 from main_table_admin.models import MainTableAdmin
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from admincharts.admin import AdminChartMixin
+
+
+class DateMonthFilter(admin.SimpleListFilter):
+    title = 'По месяцу'
+    parameter_name = 'date_month'
+
+    def lookups(self, request, model_admin):
+        # Получаем список месяцев, по которым есть записи
+        months = model_admin.get_queryset(request).datetimes('date', 'month')
+        return [(month.month,  MONTHS_RU[month.month]) for month in months]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(date__month=self.value())
+        else:
+            return queryset
 
 
 class UserFitInLines(admin.TabularInline):
@@ -39,13 +55,14 @@ class MainTableModelAdmin(AdminChartMixin, CustomModalAdmin, admin.ModelAdmin):
     search_fields = ['date', 'lesson__title', 'trainer__first_name', 'trainer__last_name']
     list_display = ['date', 'lesson', 'trainer', 'number_of_recorded', 'check_canceled',
                     'check_canceled_description']
-    list_filter = ('date', 'lesson', 'trainer')
+    list_filter = (DateMonthFilter, 'date', 'lesson', 'trainer')
     readonly_fields = ('number_of_recorded',)
     list_display_links = ['date', 'lesson', 'trainer', ]
     autocomplete_fields = ["lesson", "trainer"]
     list_chart_options = {"aspectRatio": 8}
     change_form_template = 'admin/confirm_save_modal.html'
     ordering = ['date']
+    list_per_page = 50
     fieldsets = [
         (
             "Основная информация",

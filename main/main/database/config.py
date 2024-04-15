@@ -110,7 +110,7 @@ class MainConfigTelegramBot:
                     'lesson': list(MainTableAdmin.objects.filter(date__gte=timezone.now()))}
                 print(result)
                 return result
-            elif call.startswith('type_') or call.startswith('trainers_lesson_'):
+            elif call.startswith('type_'):
                 result = list(
                     LessonFit.objects.filter(title=data).values_list('id', flat=True).all())
                 result = {'date': list(
@@ -129,6 +129,16 @@ class MainConfigTelegramBot:
                 result_to = list(
                     MainTableAdmin.objects.filter(trainer__in=result).values_list('lesson__title',
                                                                                   flat=True).distinct())
+                return result_to
+            elif call.startswith('trainers_lesson_'):
+                result = LessonFit.objects.filter(title=data['lesson']).values_list('id', flat=True).all()
+                result_to = {
+                    'date': list(MainTableAdmin.objects.filter(trainer=data['trainer_id'], lesson__title=data['lesson'],
+                                                               date__gte=timezone.now()).values_list('date',
+                                                                                                     flat=True)),
+                    'lesson': list(
+                        MainTableAdmin.objects.filter(trainer=data['trainer_id'], lesson__title=data['lesson'],
+                                                      date__gte=timezone.now()))}
                 return result_to
             elif call.startswith('date_'):
                 result = {'state': True, 'tmp': None, 'relative_user': None, 'state_relative_user': True,
@@ -361,10 +371,10 @@ class AllMarkUpForButtonBot(InlineKeyboardButton, InlineKeyboardMarkup, ReplyKey
         return markup
 
     @staticmethod
-    def get_main_lesson_handle_trainer_lesson_type(lesson):
+    def get_main_lesson_handle_trainer_lesson_type(lesson, trainer_id):
         markup = InlineKeyboardMarkup(row_width=1)
         for types in lesson:
-            markup.add(InlineKeyboardButton(text=str(types), callback_data=f"trainers_lesson_{types}"))
+            markup.add(InlineKeyboardButton(text=str(types), callback_data=f"trainers_lesson_{types}_{trainer_id}"))
         markup.row(InlineKeyboardButton(text="Назад ⬅️", callback_data="back_to_month"))
 
         return markup
@@ -475,8 +485,8 @@ class SampleTextBot:
             f'{data["lesson_title"][0][2]}\n'
             f'<b>Занятие:</b> {data["lesson_title"][0][0]}\n'
             f'<b>Тренер:</b> {data["lesson_title"][0][1]}\n'
-            f'<b>Время:</b> {formatted_date}\n')
-
+            f'<b>Время:</b> {formatted_date}\n'
+            f'<i>*Если Вас изменения не устраивают, то отмените свою запись самостоятельно.</i>')
 
     @staticmethod
     def get_for_user_is_not_reserve(data):
