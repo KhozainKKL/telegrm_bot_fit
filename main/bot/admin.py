@@ -5,12 +5,19 @@ from bot.import_export.resourse import UserFitResource, TrainerFitResource, Less
 from bot.models import UserFit, TrainerFit, LessonFit, DateLessonFit, TelegramUser
 from import_export.admin import ImportExportActionModelAdmin
 
+from main_table_admin.models import UserFitLesson
+
 admin.site.register(DateLessonFit)
 admin.site.register(TelegramUser)
 
 
+class MainTableInline(admin.TabularInline):
+    model = UserFitLesson
+
+
 @admin.register(UserFit)
 class UserFitModelAdmin(ImportExportActionModelAdmin):
+    inlines = [MainTableInline]
     resource_class = UserFitResource
     search_fields = ['first_name', 'last_name']
     list_display = ['card', 'first_name', 'last_name', 'phone', 'relative_user']

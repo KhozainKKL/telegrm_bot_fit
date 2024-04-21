@@ -7,7 +7,9 @@ from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
+from import_export.admin import ImportExportActionModelAdmin
 
+from bot.import_export.resourse import MainTableAdminResource
 from bot.main_bot import canceled_lesson_post_message_users, get_for_user_is_not_reserve, \
     change_lesson_post_message_users
 from bot.models import TelegramUser, UserFit
@@ -27,7 +29,7 @@ class DateMonthFilter(admin.SimpleListFilter):
     def lookups(self, request, model_admin):
         # Получаем список месяцев, по которым есть записи
         months = model_admin.get_queryset(request).datetimes('date', 'month')
-        return [(month.month,  MONTHS_RU[month.month]) for month in months]
+        return [(month.month, MONTHS_RU[month.month]) for month in months]
 
     def queryset(self, request, queryset):
         if self.value():
@@ -43,14 +45,15 @@ class UserFitInLines(admin.TabularInline):
 
     def get_readonly_fields(self, request, obj=None):
         readonly_fields = super().get_readonly_fields(request, obj)
-        if obj and obj.date < timezone.now():
+        date_check = timezone.now() - timedelta(days=3)
+        if obj and obj.date < date_check:
             # Если занятие уже прошло, делаем все поля только для чтения
             return [field.name for field in self.model._meta.fields]
         return readonly_fields
 
 
 @admin.register(MainTableAdmin)
-class MainTableModelAdmin(AdminChartMixin, CustomModalAdmin, admin.ModelAdmin):
+class MainTableModelAdmin(AdminChartMixin, CustomModalAdmin, ImportExportActionModelAdmin):
     inlines = [UserFitInLines]
     search_fields = ['date', 'lesson__title', 'trainer__first_name', 'trainer__last_name']
     list_display = ['date', 'lesson', 'trainer', 'number_of_recorded', 'check_canceled',
@@ -67,7 +70,7 @@ class MainTableModelAdmin(AdminChartMixin, CustomModalAdmin, admin.ModelAdmin):
         (
             "Основная информация",
             {
-                "fields": ["date", "week_schedule", "lesson", "trainer",
+                "fields": ["date", "lesson", "trainer",
                            ("max_number_of_recorded", "number_of_recorded")],
             },
         ),
@@ -85,7 +88,7 @@ class MainTableModelAdmin(AdminChartMixin, CustomModalAdmin, admin.ModelAdmin):
         readonly_fields = super().get_readonly_fields(request, obj)
         if obj and obj.date < timezone.now():
             # Если занятие уже прошло, делаем определенные поля только для чтения
-            return ['date', 'lesson', 'trainer', 'week_schedule', 'number_of_recorded', 'max_number_of_recorded',
+            return ['date', 'lesson', 'trainer', 'number_of_recorded', 'max_number_of_recorded',
                     'check_canceled', 'check_canceled_description', 'check_change_description']
         return readonly_fields
 
@@ -142,6 +145,11 @@ class MainTableModelAdmin(AdminChartMixin, CustomModalAdmin, admin.ModelAdmin):
             if deleted_object.lesson.number_of_recorded != 0:
                 deleted_object.lesson.number_of_recorded -= 1
             deleted_object.lesson.save()
+
+
+@admin.register(UserFitLesson)
+class UserFitLessonAdmin(ImportExportActionModelAdmin):
+    resource_class = MainTableAdminResource
 
 
 @admin.register(HallPromo)

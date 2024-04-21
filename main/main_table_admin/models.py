@@ -18,7 +18,6 @@ class MainTableAdmin(models.Model):
     date = models.DateTimeField(blank=True, null=True, verbose_name='Дата и время занятия')
     lesson = models.ForeignKey(LessonFit, on_delete=models.CASCADE, verbose_name='Занятие')
     trainer = models.ForeignKey(TrainerFit, on_delete=models.CASCADE, verbose_name='Тренер')
-    week_schedule = models.ForeignKey(DateLessonFit, on_delete=models.CASCADE, verbose_name='Недельное расписание')
     number_of_recorded = models.PositiveSmallIntegerField(default=0, verbose_name='Количество записанных на занятие')
     max_number_of_recorded = models.PositiveSmallIntegerField(default=10, verbose_name='Макс. органичение по записи')
     check_canceled = models.BooleanField(default=False, verbose_name='Отменить занятие?')
@@ -56,6 +55,7 @@ class UserFitLesson(models.Model):
     user = models.ForeignKey(UserFit, on_delete=models.CASCADE, verbose_name='Клиент')
     lesson = models.ForeignKey(MainTableAdmin, on_delete=models.CASCADE, verbose_name='Занятие')
     is_reserve = models.BooleanField(default=False, verbose_name='Резервный клиент')
+    is_come = models.BooleanField(default=False, verbose_name='Пришел/Не пришел')
 
     def __str__(self):
         return f'{self.user}'

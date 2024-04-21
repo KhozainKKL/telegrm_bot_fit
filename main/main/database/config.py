@@ -97,6 +97,14 @@ class MainConfigTelegramBot:
 
     @sync_to_async
     def get_data_lesson(self, call, data=None, message=None, relative_user=None):
+        current_date = timezone.now().date()
+        start_of_week = current_date - datetime.timedelta(days=current_date.weekday())
+        end_of_week = start_of_week + datetime.timedelta(days=6)
+        if current_date > end_of_week:
+            end_date = start_of_week + datetime.timedelta(weeks=1)
+        else:
+            end_date = start_of_week + datetime.timedelta(weeks=2)
+        print(end_date)
         try:
             if call == "by_type" or call == 'schedule_':
                 result = list(LessonFit.objects.values_list('title', flat=True))
@@ -106,17 +114,22 @@ class MainConfigTelegramBot:
                 return result
             elif call == "any":
                 result = {'date': list(
-                    MainTableAdmin.objects.filter(date__gte=timezone.now()).values_list('date', flat=True)),
-                    'lesson': list(MainTableAdmin.objects.filter(date__gte=timezone.now()))}
+                    MainTableAdmin.objects.filter(date__range=[timezone.now(), end_date]).values_list('date',
+                                                                                                      flat=True).order_by(
+                        'date')),
+                    'lesson': list(MainTableAdmin.objects.filter(date__range=[timezone.now(), end_date]))}
                 print(result)
                 return result
             elif call.startswith('type_'):
                 result = list(
                     LessonFit.objects.filter(title=data).values_list('id', flat=True).all())
                 result = {'date': list(
-                    MainTableAdmin.objects.filter(lesson__in=result, date__gte=timezone.now()).values_list('date',
-                                                                                                           flat=True)),
-                    'lesson': list(MainTableAdmin.objects.filter(lesson__in=result, date__gte=timezone.now()))}
+                    MainTableAdmin.objects.filter(lesson__in=result,
+                                                  date__range=[timezone.now(), end_date]).values_list('date',
+                                                                                                      flat=True).order_by(
+                        'date')),
+                    'lesson': list(
+                        MainTableAdmin.objects.filter(lesson__in=result, date__range=[timezone.now(), end_date]))}
                 print(result)
                 return result
             elif call.startswith('schedule_type_'):
@@ -134,11 +147,12 @@ class MainConfigTelegramBot:
                 result = LessonFit.objects.filter(title=data['lesson']).values_list('id', flat=True).all()
                 result_to = {
                     'date': list(MainTableAdmin.objects.filter(trainer=data['trainer_id'], lesson__title=data['lesson'],
-                                                               date__gte=timezone.now()).values_list('date',
-                                                                                                     flat=True)),
+                                                               date__range=[timezone.now(), end_date]).values_list(
+                        'date',
+                        flat=True).order_by('date')),
                     'lesson': list(
                         MainTableAdmin.objects.filter(trainer=data['trainer_id'], lesson__title=data['lesson'],
-                                                      date__gte=timezone.now()))}
+                                                      date__range=[timezone.now(), end_date]))}
                 return result_to
             elif call.startswith('date_'):
                 result = {'state': True, 'tmp': None, 'relative_user': None, 'state_relative_user': True,

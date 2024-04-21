@@ -1,7 +1,10 @@
+from django.core.exceptions import ObjectDoesNotExist
 from import_export import resources, fields
-from import_export.widgets import ForeignKeyWidget, ManyToManyWidget
+from import_export.widgets import ForeignKeyWidget
 
 from bot.models import UserFit, TrainerFit, LessonFit
+from main.settings import logger
+from main_table_admin.models import MainTableAdmin, UserFitLesson
 
 
 class UserFitResource(resources.ModelResource):
@@ -31,3 +34,20 @@ class LessonFitResource(resources.ModelResource):
 
     class Meta:
         model = LessonFit
+
+
+class MainTableAdminResource(resources.ModelResource):
+    date = fields.Field(column_name='Дата', attribute='lesson', widget=ForeignKeyWidget(MainTableAdmin, 'date'))
+    lesson = fields.Field(column_name='Занятие', attribute='lesson',
+                          widget=ForeignKeyWidget(MainTableAdmin, 'lesson__title'))
+    trainer = fields.Field(column_name='Тренер', attribute='lesson',
+                           widget=ForeignKeyWidget(MainTableAdmin, 'trainer__first_name'))
+    user_card = fields.Field(column_name='Карта', attribute='user', widget=ForeignKeyWidget(UserFit, 'card'))
+    user_first_name = fields.Field(column_name='Имя', attribute='user',
+                                   widget=ForeignKeyWidget(UserFit, 'first_name'))
+    user_last_name = fields.Field(column_name='Фамилия', attribute='user',
+                                  widget=ForeignKeyWidget(UserFit, 'last_name'))
+
+    class Meta:
+        model = UserFitLesson
+        exclude = ('id', 'is_reserve', 'is_come', 'user')
