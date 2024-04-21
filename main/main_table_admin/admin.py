@@ -150,6 +150,10 @@ class MainTableModelAdmin(AdminChartMixin, CustomModalAdmin, ImportExportActionM
 @admin.register(UserFitLesson)
 class UserFitLessonAdmin(ImportExportActionModelAdmin):
     resource_class = MainTableAdminResource
+    readonly_fields = ('user', 'lesson', 'is_reserve', 'is_come')
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(HallPromo)
