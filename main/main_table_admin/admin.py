@@ -53,7 +53,7 @@ class UserFitInLines(admin.TabularInline):
 
 
 @admin.register(MainTableAdmin)
-class MainTableModelAdmin(AdminChartMixin, CustomModalAdmin, ImportExportActionModelAdmin):
+class MainTableModelAdmin(AdminChartMixin, CustomModalAdmin, admin.ModelAdmin):
     inlines = [UserFitInLines]
     search_fields = ['date', 'lesson__title', 'trainer__first_name', 'trainer__last_name']
     list_display = ['date', 'lesson', 'trainer', 'number_of_recorded', 'check_canceled',
@@ -155,6 +155,8 @@ class UserFitLessonAdmin(ImportExportActionModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
+    def get_import_formats(self):
+        return []
 
 @admin.register(HallPromo)
 class HallPromoModelAdmin(admin.ModelAdmin):
