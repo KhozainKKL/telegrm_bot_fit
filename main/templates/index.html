@@ -133,21 +133,41 @@
             let phone = phoneInput.value;
             let errorField = document.getElementById("error");
 
-            $.ajax({
-                url: 'check_user',
-                type: 'POST',
-                contentType: 'application/json', // Указываем тип контента как JSON
-                data: JSON.stringify({card: card, phone: phone}), // Преобразуем данные в JSON-строку
-                success: function(response) {
-                    if (response.valid) {
+            // Создаем объект с данными для отправки
+            let dataToSend = {
+                card: card,
+                phone: phone
+            };
+
+            // Опции для запроса
+            let requestOptions = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dataToSend)
+            };
+
+            // Отправляем запрос на сервер
+            fetch('/check_user/', requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    // Обработка ответа от сервера
+                    if (result.valid) {
                         // Если пользователь найден, отправляем данные
                         document.getElementById("form").submit();
                     } else {
                         // Если пользователь не найден, выводим сообщение об ошибке
-                        errorField.innerText = response.error;
+                        errorField.innerText = result.error;
                     }
-                }
-            });
+                })
+                .catch(error => {
+                    // В случае ошибки выводим сообщение в консоль
+                    console.error('Error:', error);
+                });
+        });
+
+
         });
 
     </script>
