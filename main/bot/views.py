@@ -8,7 +8,6 @@ def check_user(request):
     if request.method == 'POST':
         card = request.POST.get('card')
         phone = request.POST.get('phone')
-
         if len(card) < 1:
             return JsonResponse({'error': 'ID Карты не введен.'})
         elif len(phone) < 11:
