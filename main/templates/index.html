@@ -133,36 +133,30 @@
             let phone = phoneInput.value;
             let errorField = document.getElementById("error");
 
-            // Создаем объект с данными для отправки
-            let dataToSend = {
-                card: card,
-                phone: phone
-            };
-
-            // Опции для запроса
-            let requestOptions = {
+            fetch('/check_user/', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json', // Указываем тип содержимого JSON
                 },
-                body: JSON.stringify(dataToSend)
-            };
+                body: JSON.stringify({  // Преобразуем данные в формат JSON
+                    card: card,
+                    phone: phone
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.valid) {
+                    document.getElementById("form").submit();
+                } else {
+                    errorField.innerText = data.error;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
 
-            // Отправляем запрос на сервер
-            fetch('/check_user/', requestOptions)
-                .then(response => response.json())
-                .then(result => {
-                    // Обработка ответа от сервера
-                    if (result.valid) {
-                        document.getElementById("form").submit();
-                    } else {
-                        errorField.innerText = result.error;
-                    }
-                })
-                .catch(error => {1
+        });
 
-                    console.error('Error:', error);
-                });
         });
 
     </script>
