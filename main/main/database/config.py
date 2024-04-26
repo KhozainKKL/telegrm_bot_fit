@@ -69,9 +69,8 @@ class MainConfigTelegramBot:
                     else:
                         file.write(f'[INFO] = Успешно создан user в БД {first_name} {last_name} {username}')
                         logger.info(f'Успешно создан user в БД {first_name} {last_name} {username}')
-                    return create_status
             else:
-                return {'error': 'Вы не найдены в системе'}
+                return False
         except UserFit.DoesNotExist:
             return 300
 
@@ -327,7 +326,9 @@ class AddNewUserMiddleware(BaseMiddleware):
                 res = json.loads(message.web_app_data.data)
                 result = [res["card"], res["phone"]]
                 print(f'Ответ формы приложения = {result}')
-                await MainConfigTelegramBot.get_phone_in_user_fit(message=result, data=my_data)
+                if not await MainConfigTelegramBot.get_phone_in_user_fit(message=result, data=my_data):
+                    await self.bot.send_message(message.chat.id, "Вы не были найдены в системе.\n"
+                                                                 "Уточните свои данные и повторите авторизацию.", )
 
             # if await MainConfigTelegramBot.get_phone_in_user_fit(message, my_data) == 301:
             #     await self.bot.send_message(message.chat.id,

@@ -19,10 +19,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
-from bot.views import check_user
-
 urlpatterns = [
                   path('admin/', admin.site.urls),
-                  path('check_user/', check_user, name='check_user'),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL,
                                                                                            document_root=settings.MEDIA_ROOT)
