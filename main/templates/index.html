@@ -28,12 +28,11 @@
             color: var(--tg-theme-text-color);
             background: var(--tg-theme-bg-color);
             text-align; center;
-            padding: 0 0 0 20px;
+            text-align: -webkit-center;
         }
 
         #main {
             width: 100%;
-            padding: 20px;
             text-align: center;
             max-width: 300px;
         }
@@ -79,6 +78,10 @@
             background-color: bisque;
             padding: 20px 0 0 0;
             border-bottom: groove;
+            flex-wrap: wrap;
+            display: flex;
+            text-align: center;
+            place-content: center;
         }
         label {
             color: var(--tg-theme-text-color);
