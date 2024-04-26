@@ -1,8 +1,9 @@
 from django.http import JsonResponse
-
+from django.views.decorators.csrf import csrf_exempt
 from .models import UserFit
 
 
+@csrf_exempt
 def check_user(request):
     if request.method == 'POST':
         card = request.POST.get('card')
@@ -15,8 +16,10 @@ def check_user(request):
         else:
             # Проверяем наличие пользователя в базе данных
             user_exists = UserFit.objects.filter(card=card, phone=phone).exists()
-            if user_exists.exists():
+            if user_exists:
                 # Возвращаем JSON ответ
-                return JsonResponse({'valid': user_exists})
+                return JsonResponse({'valid': True})
             else:
                 return JsonResponse({'error': 'Пользователь не найден в системе.'})
+    else:
+        return JsonResponse({'error': 'Метод запроса должен быть POST'})
