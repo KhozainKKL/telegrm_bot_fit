@@ -149,7 +149,7 @@
             };
 
             // Отправляем запрос на сервер
-            fetch('/check_user/', requestOptions)
+            fetch('http://127.0.0.1:8000/check_user/', requestOptions)
                 .then(response => response.json())
                 .then(result => {
                     // Обработка ответа от сервера
