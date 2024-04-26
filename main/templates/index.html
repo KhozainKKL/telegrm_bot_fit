@@ -134,7 +134,7 @@
             let errorField = document.getElementById("error");
 
             $.ajax({
-                url: '/check_user/',
+                url: 'check_user/',
                 type: 'POST',
                 data: {card: card, phone: phone},
                 success: function(response) {
