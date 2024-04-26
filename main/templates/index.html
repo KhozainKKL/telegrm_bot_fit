@@ -2,45 +2,13 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Аутентификация</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;500&display=swap')
 
-        @media screen and (max-width:340px) {
-            body {
-                font-size: 14px; /* Уменьшаем размер шрифта */
-            }
 
-            #main {
-                max-width: 50%; /* Ширина контейнера равна ширине экрана */
-                padding: 10px; /* Уменьшаем внутренний отступ */
-            }
-
-            input {
-                width: 90%; /* Ширина поля ввода занимает 90% контейнера */
-                font-size: 16px; /* Увеличиваем размер шрифта для улучшения видимости */
-            }
-
-            img {
-                width: 80%; /* Уменьшаем размер изображения */
-            }
-
-            button {
-                width: 90%; /* Ширина кнопки занимает 90% контейнера */
-                font-size: 18px; /* Увеличиваем размер шрифта для улучшения видимости */
-            }
-
-            .container {
-                padding: 10px; /* Уменьшаем внутренний отступ */
-            }
-
-            #error {
-                padding: 5px; /* Уменьшаем внутренний отступ */
-                font-size: 12px; /* Уменьшаем размер шрифта */
-            }
-        }
 
         #form {
             text-align: center;
@@ -66,7 +34,6 @@
         }
 
         #main {
-            width: 100%;
             text-align: center;
             max-width: 300px;
         }
@@ -81,7 +48,7 @@
         }
 
         img {
-            width: 200px;
+            max-width: 200px;
             margin: 30px auto;
             box-shadow: 5px 6px 7px #6d6262;
             border-radius: 50%;
@@ -127,6 +94,42 @@
             padding: 5px; /* Поля вокруг текста */
             border-radius: 5px; /* Скругление углов */
             display: none;
+        }
+        @media screen and (max-width: 340px) {
+             h1 {
+                font-size: 20px; /* Уменьшаем размер шрифта */
+             }
+
+            #main {
+                max-width: 85%; /* Ширина контейнера равна ширине экрана */
+            }
+
+            input {
+                width: 90%; /* Ширина поля ввода занимает 90% контейнера */
+                font-size: 16px; /* Увеличиваем размер шрифта для улучшения видимости */
+            }
+
+            img {
+                width: 50%; /* Уменьшаем размер изображения */
+            }
+
+            button {
+                max-width: 70%;
+                font-size: 16px;
+            }
+
+            .container {
+                max-width: 80%;
+            }
+
+            #error {
+                padding: 5px; /* Уменьшаем внутренний отступ */
+                font-size: 12px; /* Уменьшаем размер шрифта */
+            }
+            #form {
+                text-align: -webkit-center;
+            }
+
         }
     </style>
 
