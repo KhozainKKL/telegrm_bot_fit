@@ -6,6 +6,47 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Аутентификация</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        document.getElementById("error").innerText = "";
+        let tg = window.Telegram.WebApp;
+        let order = document.getElementById("order");
+        let phoneInput = document.getElementById("user_phone");
+        tg.expand();
+
+        phoneInput.addEventListener("input", function() {
+            let phoneNumber = phoneInput.value.replace(/\D/g, '');
+            phoneNumber = phoneNumber.slice(0, 11);
+            if (!phoneNumber.startsWith('8') && phoneNumber.length > 0) {
+                phoneNumber = '8' + phoneNumber;
+            }
+            phoneNumber = phoneNumber.replace(/(\d{1})(\d{3})(\d{3})(\d{2})(\d{2})/, '$1$2$3$4$5');
+            phoneInput.value = phoneNumber;
+        });
+
+        order.addEventListener("click", () => {
+            let card = document.getElementById("user_card").value;
+            let phone = phoneInput.value;
+
+            if (card.length < 1) {
+                document.getElementById("error").innerText = 'ID Карты клиента пуст';
+                return;
+            }
+            if (phone.length < 11) {
+                document.getElementById("error").innerText = 'Ошибка в номере телефона';
+                return;
+            }
+
+            let data = {
+                card: card,
+                phone: phone,
+            }
+            console.log(data);
+            tg.sendData(JSON.stringify(data));
+
+            tg.close();
+        });
+
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;500&display=swap')
 
@@ -102,47 +143,7 @@
         </form>
 
     </div>
-    <script>
-        document.getElementById("error").innerText = "";
-        let tg = window.Telegram.WebApp;
-        let order = document.getElementById("order");
-        let phoneInput = document.getElementById("user_phone");
-        tg.expand();
 
-        phoneInput.addEventListener("input", function() {
-            let phoneNumber = phoneInput.value.replace(/\D/g, '');
-            phoneNumber = phoneNumber.slice(0, 11);
-            if (!phoneNumber.startsWith('8') && phoneNumber.length > 0) {
-                phoneNumber = '8' + phoneNumber;
-            }
-            phoneNumber = phoneNumber.replace(/(\d{1})(\d{3})(\d{3})(\d{2})(\d{2})/, '$1$2$3$4$5');
-            phoneInput.value = phoneNumber;
-        });
-
-        order.addEventListener("click", () => {
-            let card = document.getElementById("user_card").value;
-            let phone = phoneInput.value;
-
-            if (card.length < 1) {
-                document.getElementById("error").innerText = 'ID Карты клиента пуст';
-                return;
-            }
-            if (phone.length < 11) {
-                document.getElementById("error").innerText = 'Ошибка в номере телефона';
-                return;
-            }
-
-            let data = {
-                card: card,
-                phone: phone,
-            }
-            console.log(data);
-            tg.sendData(JSON.stringify(data));
-
-            tg.close();
-        });
-
-    </script>
 
 </body>
 </html>
