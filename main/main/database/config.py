@@ -9,7 +9,7 @@ from django.utils import timezone
 from bot.models import TelegramUser, LessonFit, TrainerFit, UserFit, DateLessonFit, MONTHS_RU
 from asgiref.sync import sync_to_async
 from main_table_admin.models import MainTableAdmin, UserFitLesson
-from telebot.types import Chat, User, WebAppInfo
+from telebot.types import Chat, User, WebAppInfo, Message
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 
 logger = logging.getLogger(__name__)
@@ -21,7 +21,7 @@ class MainConfigTelegramBot:
         self.bot = bot
 
     @sync_to_async
-    def get_is_authenticated_tg_user(self, message: Chat | User):
+    def get_is_authenticated_tg_user(self, message: Chat | Message):
         try:
             get = TelegramUser.objects.get(telegram_user_id=message.from_user.id)
         except TelegramUser.DoesNotExist:
@@ -311,7 +311,7 @@ class AddNewUserMiddleware(BaseMiddleware):
                 url='https://khozainkkl.github.io/telegrm_bot_fit.github.io/main/templates/index.html')))
             await self.bot.send_message(message.chat.id,
                                         "Для получения полного доступа,пожалуйста нажмите кнопку \n"
-                                        "<blockquote>️ Авторизоваться ❇️</blockquote>\n"
+                                        "<blockquote>️Авторизоваться ❇️</blockquote>\n"
                                         "для своей идентификации в Нашем фитнес-клубе.",
                                         reply_markup=markup)
 
