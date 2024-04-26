@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Аутентификация</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;500&display=swap')
 
@@ -83,8 +84,15 @@
         label {
             color: var(--tg-theme-text-color);
         }
-    </style>
 
+        #error {
+            background-color: #ffcccc; /* Красный фон */
+            color: #990000; /* Цвет текста */
+            padding: 5px; /* Поля вокруг текста */
+            border-radius: 5px; /* Скругление углов */
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <div class="main" id="main">
@@ -103,7 +111,6 @@
 
     </div>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
     <script>
         document.getElementById("error").innerText = "";
         let tg = window.Telegram.WebApp;
@@ -124,24 +131,25 @@
         order.addEventListener("click", () => {
             let card = document.getElementById("user_card").value;
             let phone = phoneInput.value;
+            let errorField = document.getElementById("error");
 
-            if (card.length < 1) {
-                document.getElementById("error").innerText = 'ID Карты клиента пуст';
-                return;
-            }
-            if (phone.length < 11) {
-                document.getElementById("error").innerText = 'Ошибка в номере телефона';
-                return;
-            }
-
-            let data = {
-                card: card,
-                phone: phone,
-            }
-            console.log(data);
-            tg.sendData(JSON.stringify(data));
-
-            tg.close();
+            $.ajax({
+                url: '/check_user/',
+                type: 'POST',
+                data: {card: card, phone: phone},
+                success: function(response) {
+                    if (response.valid) {
+                        // Если пользователь найден, отправляем данные
+                        document.getElementById("form").submit();
+                    } else {
+                        // Если пользователь не найден, выводим сообщение об ошибке
+                        errorField.innerText = response.error;
+                    }
+                },
+                error: function(xhr, errmsg, err) {
+                    console.log(xhr.status + ": " + xhr.responseText); // Вывод ошибки в консоль
+                }
+            });
         });
 
     </script>

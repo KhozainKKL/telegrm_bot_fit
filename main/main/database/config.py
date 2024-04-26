@@ -70,6 +70,8 @@ class MainConfigTelegramBot:
                         file.write(f'[INFO] = Успешно создан user в БД {first_name} {last_name} {username}')
                         logger.info(f'Успешно создан user в БД {first_name} {last_name} {username}')
                     return create_status
+            else:
+                return {'error': 'Вы не найдены в системе'}
         except UserFit.DoesNotExist:
             return 300
 
