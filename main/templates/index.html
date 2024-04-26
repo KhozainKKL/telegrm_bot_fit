@@ -134,7 +134,7 @@
             let errorField = document.getElementById("error");
 
             $.ajax({
-                url: '/check_user/',
+                url: 'check_user',
                 type: 'POST',
                 contentType: 'application/json', // Указываем тип контента как JSON
                 data: JSON.stringify({card: card, phone: phone}), // Преобразуем данные в JSON-строку
@@ -146,9 +146,6 @@
                         // Если пользователь не найден, выводим сообщение об ошибке
                         errorField.innerText = response.error;
                     }
-                },
-                error: function(xhr, errmsg, err) {
-                    console.log(xhr.status + ": " + xhr.responseText); // Вывод ошибки в консоль
                 }
             });
         });
