@@ -317,8 +317,8 @@ class AddNewUserMiddleware(BaseMiddleware):
             markup = ReplyKeyboardMarkup()
             markup.add(KeyboardButton('Авторизоваться.', web_app=WebAppInfo(
                 url='https://khozainkkl.github.io/telegrm_bot_fit.github.io/main/templates/index.html')))
-            await self.bot.send_message(message.chat.id, "Вы не авторизованы...\n"
-                                                         "Пожалуйста нажмите на кнопку Авторизоваться для прохождения авторизации.",
+            await self.bot.send_message(message.chat.id,
+                                        "Пожалуйста нажмите на кнопку Авторизоваться для прохождения авторизации.",
                                         reply_markup=markup)
 
             @self.bot.message_handler(content_types=['web_app_data'])
