@@ -311,7 +311,7 @@ class AddNewUserMiddleware(BaseMiddleware):
                 url='https://khozainkkl.github.io/telegrm_bot_fit.github.io/main/templates/index.html')))
             await self.bot.send_message(message.chat.id,
                                         "Для получения полного доступа,пожалуйста нажмите кнопку \n"
-                                        "<blockquote>️ Авторизоваться ❇️ </blockquote> \n"
+                                        "<blockquote>️ Авторизоваться ❇️</blockquote>\n"
                                         "для своей идентификации в Нашем фитнес-клубе.",
                                         reply_markup=markup)
 
