@@ -60,15 +60,7 @@ class MainConfigTelegramBot:
                     is_authenticated=True,
                     telegram_user_id=data.id,
                     defaults=defaults_dict)
-                with open(f'bot/logging/{data.id}', 'w+', encoding='utf-8') as file:
-                    if create_status is False:
-                        file.write(
-                            f'Успешно обновлен user в БД: id:{data.id} Имя:{first_name} Фамилия:{last_name} Никнейм:{username}')
-                        logger.info(
-                            f'Успешно обновлен user в БД: id:{data.id} Имя:{first_name} Фамилия:{last_name} Никнейм:{username}')
-                    else:
-                        file.write(f'[INFO] = Успешно создан user в БД {first_name} {last_name} {username}')
-                        logger.info(f'Успешно создан user в БД {first_name} {last_name} {username}')
+                return True
             else:
                 return False
         except UserFit.DoesNotExist:
@@ -315,10 +307,10 @@ class AddNewUserMiddleware(BaseMiddleware):
 
         if await MainConfigTelegramBot.get_is_authenticated_tg_user(message) == 100:
             markup = ReplyKeyboardMarkup()
-            markup.add(KeyboardButton('Авторизоваться.', web_app=WebAppInfo(
+            markup.add(KeyboardButton('Авторизоваться ❇️', web_app=WebAppInfo(
                 url='https://khozainkkl.github.io/telegrm_bot_fit.github.io/main/templates/index.html')))
             await self.bot.send_message(message.chat.id,
-                                        "Пожалуйста нажмите на кнопку Авторизоваться для прохождения авторизации.",
+                                        "Пожалуйста нажмите на кнопку <blockquote>️ Авторизоваться ❇️ </blockquote> ️для идентификации.",
                                         reply_markup=markup)
 
             @self.bot.message_handler(content_types=['web_app_data'])
@@ -327,12 +319,11 @@ class AddNewUserMiddleware(BaseMiddleware):
                 result = [res["card"], res["phone"]]
                 print(f'Ответ формы приложения = {result}')
                 if not await MainConfigTelegramBot.get_phone_in_user_fit(message=result, data=my_data):
-                    await self.bot.send_message(message.chat.id, "Вы не были найдены в системе.\n"
-                                                                 "Уточните свои данные и повторите авторизацию.", )
-
-            # if await MainConfigTelegramBot.get_phone_in_user_fit(message, my_data) == 301:
-            #     await self.bot.send_message(message.chat.id,
-            #                                 "<b>Успех: Приятного пользования.</b>")
+                    await self.bot.send_message(message.chat.id, "Вы не были найдены в системе.❌\n"
+                                                                 "Уточните свои данные и повторите авторизацию.⤴️")
+                else:
+                    await self.bot.send_message(message.chat.id, SampleTextBot.main_text(),
+                                                reply_markup=AllMarkUpForButtonBot.reply_keyboard_button_main())
 
     async def post_process(self, message, data, exception):
         pass
