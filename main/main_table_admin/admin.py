@@ -157,6 +157,7 @@ class UserFitLessonAdmin(ImportExportActionModelAdmin):
 
     def get_import_formats(self):
         return []
+    
 
 @admin.register(HallPromo)
 class HallPromoModelAdmin(admin.ModelAdmin):

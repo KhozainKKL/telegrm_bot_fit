@@ -1,4 +1,5 @@
 import datetime
+import json
 import logging
 import re
 from telebot import BaseMiddleware
@@ -8,7 +9,7 @@ from django.utils import timezone
 from bot.models import TelegramUser, LessonFit, TrainerFit, UserFit, DateLessonFit, MONTHS_RU
 from asgiref.sync import sync_to_async
 from main_table_admin.models import MainTableAdmin, UserFitLesson
-from telebot.types import Chat, User
+from telebot.types import Chat, User, WebAppInfo
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 
 logger = logging.getLogger(__name__)
@@ -27,10 +28,8 @@ class MainConfigTelegramBot:
             return 100
 
     @sync_to_async
-    def get_phone_in_user_fit(self, message: Chat | User, data: Chat | User):
+    def get_phone_in_user_fit(self, message: list, data: Chat | User):
         try:
-            message = message.text.split(' ')
-
             def format_phone_number(phone_number):
                 phone_number = str(phone_number)
                 digits = re.sub(r'\D', '', phone_number)
@@ -314,12 +313,23 @@ class AddNewUserMiddleware(BaseMiddleware):
             return None
 
         if await MainConfigTelegramBot.get_is_authenticated_tg_user(message) == 100:
-            await self.bot.send_message(message.chat.id,
-                                        "Пожалуйста, введите номер Вашей карты клиента, а затем (через пробел) \n"
-                                        "номер телефона указанные в договоре \n(Например: 111 88005551011):")
-            if await MainConfigTelegramBot.get_phone_in_user_fit(message, my_data) == 301:
-                await self.bot.send_message(message.chat.id,
-                                            "<b>Успех: Приятного пользования.</b>")
+            markup = ReplyKeyboardMarkup()
+            markup.add(KeyboardButton('Авторизоваться.', web_app=WebAppInfo(
+                url='https://htmlpreview.github.io/?https://github.com/KhozainKKL/telegrm_bot_fit/tree/master/main/templates/authentification_handler.html')))
+            await self.bot.send_message(message.chat.id, "Вы не авторизованы...\n"
+                                                         "Пожалуйста нажмите на кнопку Авторизоваться для прохождения авторизации.",
+                                        reply_markup=markup)
+
+            @self.bot.message_handler(content_types=['web_app_data'])
+            async def web_app(message):
+                res = json.loads(message.web_app_data.data)
+                result = [res["card"], res["phone"]]
+                print(f'Ответ формы приложения = {result}')
+                await MainConfigTelegramBot.get_phone_in_user_fit(message=result, data=my_data)
+
+            # if await MainConfigTelegramBot.get_phone_in_user_fit(message, my_data) == 301:
+            #     await self.bot.send_message(message.chat.id,
+            #                                 "<b>Успех: Приятного пользования.</b>")
 
     async def post_process(self, message, data, exception):
         pass

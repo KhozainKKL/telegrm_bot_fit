@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Аутентификация</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;500&display=swap')
+
+        #form {
+            text-align: center;
+        }
+
+        input {
+            padding: 10px;
+            margin: 10px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Monserrat', sans-serif;
+            font-weight: 200;
+            color: var(--tg-theme-text-color);
+            background: var(--tg-theme-bg-color);
+        }
+
+        #main {
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+            max-width: 300px;
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            margin-top: 50px;
+            margin-bottom: 10px;
+            border-bottom: inset;
+            border-bottom-color: currentcolor;
+            border-radius: 40%;
+        }
+
+        img {
+            width: 200px;
+            margin: 30px auto;
+            box-shadow: 5px 6px 7px #6d6262;
+            border-radius: 50%;
+        }
+
+        button {
+            border: 0;
+            border-radius: 5px;
+            margin-top:50px;
+            height: 60px;
+            width: 200px;
+            font-size: 20px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 500ms cubic-bezier(0.63, 0, 0, 1.17);
+            color: var(--tg-theme-text-color);
+            background: var(--tg-theme-bg-color);
+        }
+
+        button:hover {
+            background: var(--tg-theme-secondary-bg-color);
+        }
+
+        .container {
+            border: 0;
+            border-radius: 20px;
+            background-color: bisque;
+            padding: 20px 0 0 0;
+            border-bottom: groove;
+        }
+        label {
+            font-family: 'Montserrat', sans-serif;
+
+        }
+    </style>
+
+</head>
+<body>
+    <div class="main" id="main">
+        <h1>Фитнес клуб</h1>
+        <img src="../media/Новая папка/logo.jpg" alt="Логотип">
+        <form id="form" method="post">
+            <div class="container">
+                <label for="user_card">ID Карты клиента</label>
+                <input type="number" name="card" id="user_card" placeholder="123">
+                <label for="user_phone">Номер телефона</label>
+                <input type="number" name="phone" id="user_phone" placeholder="88009005040">
+                <div id="error"></div>
+            </div>
+            <button id="order">Авторизоваться</button>
+        </form>
+
+    </div>
+    <script>
+        document.getElementById("error").innerText = "";
+        let tg = window.Telegram.WebApp;
+        let order = document.getElementById("order");
+        let phoneInput = document.getElementById("user_phone");
+        tg.expand();
+
+        phoneInput.addEventListener("input", function() {
+            let phoneNumber = phoneInput.value.replace(/\D/g, '');
+            phoneNumber = phoneNumber.slice(0, 11);
+            if (!phoneNumber.startsWith('8') && phoneNumber.length > 0) {
+                phoneNumber = '8' + phoneNumber;
+            }
+            phoneNumber = phoneNumber.replace(/(\d{1})(\d{3})(\d{3})(\d{2})(\d{2})/, '$1$2$3$4$5');
+            phoneInput.value = phoneNumber;
+        });
+
+        order.addEventListener("click", () => {
+            let card = document.getElementById("user_card").value;
+            let phone = phoneInput.value;
+
+            if (card.length < 1) {
+                document.getElementById("error").innerText = 'ID Карты клиента пуст';
+                return;
+            }
+            if (phone.length < 11) {
+                document.getElementById("error").innerText = 'Ошибка в номере телефона';
+                return;
+            }
+
+            let data = {
+                card: card,
+                phone: phone,
+            }
+            console.log(data);
+            tg.sendData(JSON.stringify(data));
+
+            tg.close();
+        });
+
+    </script>
+
+</body>
+</html>
