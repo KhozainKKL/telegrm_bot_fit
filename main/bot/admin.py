@@ -8,7 +8,21 @@ from import_export.admin import ImportExportActionModelAdmin
 from main_table_admin.models import UserFitLesson
 
 admin.site.register(DateLessonFit)
-admin.site.register(TelegramUser)
+
+
+# admin.site.register(TelegramUser)
+
+@admin.register(TelegramUser)
+class TelegramUserModelAdmin(admin.ModelAdmin):
+    list_display = ['card', 'telegram_user_id', 'first_name', 'last_name']
+    fieldsets = [
+        (
+            None,
+            {
+                'fields': ['card', 'telegram_user_id', 'is_authenticated', 'username', 'first_name', 'last_name'],
+            },
+        ),
+    ]
 
 
 class MainTableInline(admin.TabularInline):

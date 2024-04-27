@@ -215,6 +215,7 @@ async def schedule(message):
 @bot.message_handler(regexp='Занятия на которые Вы записаны📆')
 @config.require_authentication
 async def my_lesson(message):
+    global show, show_relative
     data = await config.get_data_my_lesson(message)
     if not data['user']:
         await bot.send_message(message.chat.id, "Вы пока не записаны на занятия.")

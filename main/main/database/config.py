@@ -39,6 +39,7 @@ class MainConfigTelegramBot:
                 return formatted_number
 
             phone = UserFit.objects.filter(card=message[0], phone=format_phone_number(message[1]))
+            print(f'PHONE = {phone}')
             if phone.exists():
                 try:
                     data = getattr(data, 'chat')
@@ -55,11 +56,14 @@ class MainConfigTelegramBot:
                     username = ''
                 defaults_dict = {'first_name': first_name, 'last_name': last_name, 'username': username}
                 set_card = UserFit.objects.get(card=message[0])
+                print(f'SET_CARD = {type(set_card)} = {set_card}')
                 telegram_user, create_status = TelegramUser.objects.update_or_create(
                     card=set_card,
                     is_authenticated=True,
                     telegram_user_id=data.id,
-                    defaults=defaults_dict)
+                    defaults=defaults_dict
+                )
+                print(f'TELEGRAM_USER = {telegram_user}')
                 return True
             else:
                 return False
