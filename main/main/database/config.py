@@ -28,42 +28,26 @@ class MainConfigTelegramBot:
             return 100
 
     @sync_to_async
-    def get_phone_in_user_fit(self, message: list, data: Chat | User):
+    def get_phone_in_user_fit(self, message: Chat | User):
         try:
             def format_phone_number(phone_number):
                 phone_number = str(phone_number)
                 digits = re.sub(r'\D', '', phone_number)
-
                 formatted_number = '+7-{}-{}-{}-{}'.format(digits[-10:-7], digits[-7:-4], digits[-4:-2], digits[-2:])
-                print(formatted_number)
                 return formatted_number
 
-            phone = UserFit.objects.filter(phone=format_phone_number(message))
-            print(f'PHONE = {phone}')
+            phone = UserFit.objects.filter(phone=format_phone_number(message.contact.phone_number))
             if phone.exists():
-                try:
-                    data = getattr(data, 'chat')
-                except AttributeError:
-                    data = data
-                first_name = data.first_name
-                if not data.first_name:
-                    first_name = ''
-                last_name = data.last_name
-                if not data.last_name:
-                    last_name = ''
-                username = data.username
-                if not data.username:
-                    username = ''
-                defaults_dict = {'first_name': first_name, 'last_name': last_name, 'username': username}
-                set_card = UserFit.objects.get(phone=format_phone_number(message))
-                print(f'SET_CARD = {type(set_card)} = {set_card}')
+                defaults_dict = {'first_name': message.from_user.first_name, 'last_name': message.from_user.last_name,
+                                 'username': message.from_user.username}
+                set_card = UserFit.objects.get(phone=format_phone_number(message.contact.phone_number))
+                print(f'DATA = {message.contact}')
                 telegram_user, create_status = TelegramUser.objects.update_or_create(
                     card=set_card,
                     is_authenticated=True,
-                    telegram_user_id=data.id,
+                    telegram_user_id=message.contact.user_id,
                     defaults=defaults_dict
                 )
-                print(f'TELEGRAM_USER = {telegram_user}')
                 return True
             else:
                 return False
@@ -295,27 +279,12 @@ class AddNewUserMiddleware(BaseMiddleware):
         self.update_types = ['message']
 
     async def pre_process(self, message, data):
-        my_data = None
-        try:
-            my_data = getattr(message, 'chat')
-        except AttributeError:
-            pass
-        try:
-            my_data = getattr(message, 'from_user')
-        except AttributeError:
-            pass
-        if not my_data:
-            return None
-        if not message.text:
-            return None
-
         if await MainConfigTelegramBot.get_is_authenticated_tg_user(message) == 100:
             markup = ReplyKeyboardMarkup()
             markup.add(KeyboardButton('Поделиться номером телефона ❇️', request_contact=True))
             await self.bot.send_message(message.chat.id,
-                                        "Для получения доступа поделитесь своим номером телефона,пожалуйста нажмите кнопку \n"
-                                        "<blockquote>️Поделиться номером телефона ❇️</blockquote>\n"
-                                        "для своей идентификации в Нашем фитнес-клубе.",
+                                        "Для получения доступа поделитесь своим номером телефона"
+                                        " для своей идентификации в Нашем фитнес-клубе.",
                                         reply_markup=markup)
 
             @self.bot.message_handler(content_types=['contact'])
@@ -324,7 +293,8 @@ class AddNewUserMiddleware(BaseMiddleware):
                     await self.bot.send_message(message.chat.id, "Номер телефона не действителен.❌\n"
                                                                  "Сработала защита от мошенничества.⤴️")
                 else:
-                    if not await MainConfigTelegramBot.get_phone_in_user_fit(message=message.contact.phone_number, data=my_data):
+                    print(f'MESSAGE CONTACT = {message.contact}')
+                    if not await MainConfigTelegramBot.get_phone_in_user_fit(message=message):
                         await self.bot.send_message(message.chat.id, "Вы не были найдены в системе.❌\n"
                                                                      "Уточните свои данные и повторите авторизацию.⤴️")
                     else:
