@@ -1,32 +1,6 @@
-<head>
-    <style>
-        h1, h2{
-            color:green;
-            font-family: 'Montserrat', sans-serif;
-        }     
-        .header {
-            text-align: center;
-        }
-        img {
-            height: 200px;
-            width: 200px;
-        }
-        .query, .func {
-            margin-top: 20px;
-            border: 0;
-            border-radius: 20px;
-            padding: 0 20px 0 ;
-            border-bottom: groove;
-            border-top: groove;
-            flex-wrap: wrap;
-            place-content: center;
-        }
-
-</style>
-</head>
 <div class="header">
     <h1> Телеграмм бот для фитнес-клуба Loft Gym</h1>
-    <img alt="лого" src="main/media/Новая папка/logo.jpg"/>
+    <img alt="лого" src="main/media/Новая папка/logo.jpg" width="200" height="200"/>
 </div>
 <div class="query">
     <h2>Задачи:</h2>
