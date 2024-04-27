@@ -27,10 +27,30 @@
 ```shell
   docker-compose up --build
 ```
-<p>Запуск локального проекта на 8000 порту</p>
+<p>Запуск локального проекта на 8000 порту в директории main</p>
 
 ```shell
-python manage.py runserver && python manage.py run_bot
+pip install -r ../requirements.txt 
 ```
+```shell
+python manage.py migrate && python manage.py runserver
+```
+<p>Запуск бота</p>
+
+```shell
+python manage.py run_bot
+```
+
+<p>Запуск локального celery</p>
+
+```shell
+celery -A main worker -l info
+```
+<p>Запуск локального flower</p>
+
+```shell
+celery -A main flower --port=5555
+```
+<i>Примечание: grafana и loki  локально не запускаются</i>
 
 </div>
