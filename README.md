@@ -21,8 +21,7 @@
     </ul>
 </div>
 <div class="func">
-    <h2>Функции:</h2>
-    <p><b>Запуск проекта через Docker</b></p>
+    <h2>Настройка:</h2>
 
 `.env`
 ```dotenv
@@ -31,6 +30,8 @@ DEBUG=False
 TG_API_KEY=Ключ Телеграмм бота
 LOGLEVEL=info
 ```
+
+<p><b>Запуск проекта через Docker</b></p>
 
 ```shell
   docker-compose up --build
