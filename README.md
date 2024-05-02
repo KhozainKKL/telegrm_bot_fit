@@ -24,13 +24,13 @@
     <h2>Функции:</h2>
     <p>Запуск проекта через Docker</p>
 
+`.env`
 ```dotenv
 SECRET_KEY=КЛЮЧ DJANGO
 DEBUG=False
 TG_API_KEY=Ключ Телеграмм бота
 LOGLEVEL=info
 ```
-
 
 ```shell
   docker-compose up --build
