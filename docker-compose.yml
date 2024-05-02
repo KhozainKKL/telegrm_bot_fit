@@ -4,7 +4,7 @@ services:
   grafana:
     restart: always
     container_name: grafana
-    image: "grafana/grafana:9.2.15"
+    image: "grafana/grafana:latest"
     environment:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
@@ -13,7 +13,7 @@ services:
   loki:
     restart: always
     container_name: loki
-    image: "grafana/loki:2.8.0"
+    image: "grafana/loki:latest"
     ports:
       - "3100:3100"
     depends_on:
