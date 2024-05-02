@@ -22,7 +22,7 @@
 </div>
 <div class="func">
     <h2>Функции:</h2>
-    <p>Запуск проекта через Docker</p>
+    <p><b>Запуск проекта через Docker</b></p>
 
 `.env`
 ```dotenv
@@ -35,7 +35,7 @@ LOGLEVEL=info
 ```shell
   docker-compose up --build
 ```
-<p>Запуск локального проекта на 8000 порту в директории main</p>
+<p><b>Запуск локального проекта на 8000 порту в директории main</b></p>
 
 ```shell
 pip install -r ../requirements.txt 
