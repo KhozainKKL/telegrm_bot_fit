@@ -23,7 +23,7 @@ services:
     container_name: web_admin
     build: .
     command: >
-      bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+      bash -c "python manage.py migrate && uvicorn main.asgi:application --host 0.0.0.0 --reload --log-level info"
     volumes:
       - .:/main
     ports:
