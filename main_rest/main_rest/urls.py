@@ -20,8 +20,12 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
+from api.maintable_admin.views import MainTableViewSet
+from api.user_lesson_to_fit.views import UserLessonFitViewSet
 
 router = routers.DefaultRouter()
+router.register(r"products", MainTableViewSet)
+router.register(r"user_lesson_fit", UserLessonFitViewSet, basename="user_lesson_fit")
 
 urlpatterns = [
     path("admin/", admin.site.urls),

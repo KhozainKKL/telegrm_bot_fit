@@ -48,11 +48,14 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "bot.apps.BotConfig",
+    "api.apps.ApiConfig",
     "management.apps.ManagementConfig",
     "import_export",
     "admincharts",
     "custom_modal_admin",
     "rest_framework",
+    "django_filters",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
