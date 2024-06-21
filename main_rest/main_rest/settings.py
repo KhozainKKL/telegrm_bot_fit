@@ -31,6 +31,8 @@ SECRET_KEY = env.str("SECRET_KEY")
 
 DEBUG = env.bool("DEBUG")
 
+SERVER_URL = env.str("SERVER_URL")
+
 ALLOWED_HOSTS = ["*"]
 TG_API_KEY = env.str("TG_API_KEY")
 INTERNAL_IPS = [
