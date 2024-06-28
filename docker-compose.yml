@@ -1,4 +1,4 @@
-version: "3.1"
+version: "3.7"
 
 services:
   grafana:
@@ -25,7 +25,7 @@ services:
     command: >
       bash -c "python manage.py migrate && uvicorn main.asgi:application --host 0.0.0.0 --reload --log-level info"
     volumes:
-      - .:/main
+      - ./main:/main/
     ports:
       - "8000:8000"
     env_file:
@@ -41,49 +41,67 @@ services:
     build: .
     command: python3 manage.py run_bot
     restart: always
-    networks:
-      - botnet
     env_file:
       - ".env"
     volumes:
-      - .:/main
+     - ./main:/main/
     depends_on:
     - web_admin
     - redis
     - loki
+    - db_postgresql
     logging:  #  docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions
       driver: loki
       options:
         loki-url: http://localhost:3100/loki/api/v1/push
   redis:
-    container_name: redis
-    image: "redis:latest"
+    image: redis:alpine3.20
     ports:
-      - "6379:6379"
+      - '6379:6379'
   celery:
-    restart: always
+    image: celery:4.0.2
     container_name: celery
-    volumes:
-      - .:/main
+    restart: always
     build: .
+    command: bash -c "celery -A main worker -l info"
     env_file:
       - ".env"
-    command: >
-      bash -c "celery -A main worker -l info"
     depends_on:
       - redis
+      - web_admin
+      - db_postgresql
   flower:
     restart: always
     container_name: flower
-    volumes:
-      - .:/main
     build: .
+    image: celery:4.0.2
     ports:
-      - "5555:5555"
-    command: >
-       bash -c "celery -A main flower --port=5555"
+      - '5555:5555'
+    command: bash -c "celery -A main flower --port=5555"
+    env_file:
+      - ".env"
     depends_on:
-    - celery
+      - redis
+      - web_admin
+      - celery
+      - db_postgresql
+  db_postgresql:
+    container_name: postgresql
+    env_file:
+       - ".env"
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    image: postgres:16.3-alpine3.20
+    restart: always
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
 
 
 networks:
