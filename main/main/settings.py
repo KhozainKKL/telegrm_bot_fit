@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import os
-
+from celery.schedules import crontab
 import colorlog
 from environs import Env
 from import_export.formats.base_formats import XLSX, XLS
@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     "main_table_admin.apps.MainTableAdminConfig",
     "admincharts",
     "custom_modal_admin",
-    "flower",
 ]
 
 MIDDLEWARE = [
@@ -190,6 +189,15 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "Europe/Moscow"
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+
+CELERY_BEAT_SCHEDULE = {
+    "dump-database-every-3-months": {
+        "task": "myapp.tasks.dump_database",
+        # "schedule": crontab(minute=0, hour=0, day_of_month=1, month_of_year="*/3"),
+        "schedule": crontab(minute=1, hour=0, day_of_month=1),
+    },
+}
+
 
 CACHES = {
     "default": {
